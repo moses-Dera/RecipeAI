@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: hsl(var(--bg-primary));
+  --color-bg-surface: hsl(var(--bg-surface));
+  --color-text-primary: hsl(var(--text-primary));
+  --color-text-secondary: hsl(var(--text-secondary));
+  
+  --color-brand-primary: hsl(var(--brand-primary));
+  --color-brand-secondary: hsl(var(--brand-secondary));
+
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
+}
+
+:root {
+  /* The Spice Market - Light Mode (Warm & Inviting) */
+  --bg-primary: 40 67% 98%;      /* #FDFBF7 Warm Cream */
+  --bg-surface: 36 33% 94%;      /* #F4F0EA Soft Bone */
+  --text-primary: 21 30% 13%;    /* #2B1E17 Deep Roast Espresso */
+  --text-secondary: 21 16% 40%;  /* Muted Espresso */
+  
+  --brand-primary: 13 67% 54%;   /* #D95D39 Terracotta / Burnt Orange */
+  --brand-secondary: 142 60% 45%;/* Earthy Green (Kept for contrast) */
+}
+
+.dark {
+  /* The Spice Market - Dark Mode (Deep & Premium) */
+  --bg-primary: 0 0% 7%;         /* #121212 Deep Charcoal */
+  --bg-surface: 0 0% 12%;        /* #1E1E1E Rich Onyx */
+  --text-primary: 0 0% 96%;      /* #F5F5F5 Soft Ivory */
+  --text-secondary: 0 0% 63%;    /* Muted Ivory */
+  
+  --brand-primary: 16 65% 68%;   /* #E29578 Warm Amber / Ochre */
+  --brand-secondary: 142 50% 55%;/* Lighter Earthy Green */
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), sans-serif;
+}

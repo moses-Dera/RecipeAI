@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+model User {
+  user_id     Int      @id @default(autoincrement())
+  username    String
+  email       String   @unique
+  password    String?  // nullable — OAuth users have none
+  role        UserRole @default(user)
+  created_at  DateTime @default(now())
+  profile_img String?
+  accounts    Account[]
+  saved       SavedRecipe[]
+  chats       ChatHistory[]
+  recipes     Recipe[]
+}
+
+model Account {
+  id                   String  @id @default(cuid())
+  user_id              Int
+  provider             String  // "google"
+  provider_account_id  String
+  access_token         String?
+  refresh_token        String?
+  user                 User    @relation(fields: [user_id], references: [user_id])
+  @@unique([provider, provider_account_id])
+}
+
+model Recipe {
+  recipe_id     Int      @id @default(autoincrement())
+  title         String
+  ingredients   String   // JSON: [{name, quantity, unit}]
+  steps         String   // JSON: ordered array
+  nutrition     String?  // JSON — platform recipes only; omitted for user-published
+  region        String?
+  image_url     String?
+  prep_time_min Int?
+  difficulty    String   @default("medium")
+  owner_id      Int?     // null = platform recipe
+  is_private    Boolean  @default(false)
+  meal_type     String[] @default([])  // required at creation, e.g. ["breakfast","snack"]
+  occasion      String[] @default([])  // required at creation, e.g. ["everyday","party"]
+  created_at    DateTime @default(now())
+  owner         User?    @relation(fields: [owner_id], references: [user_id])
+  saved         SavedRecipe[]
+
+  @@index([owner_id])
+  @@index([region])
+  @@index([title])
+  @@index([meal_type])
+  @@index([occasion])
+}
+
+model SavedRecipe {
+  save_id   Int      @id @default(autoincrement())
+  user_id   Int
+  recipe_id Int
+  saved_at  DateTime @default(now())
+  notes     String?
+  user      User   @relation(fields: [user_id], references: [user_id])
+  recipe    Recipe @relation(fields: [recipe_id], references: [recipe_id])
+  @@unique([user_id, recipe_id])
+}
+
+model ChatHistory {
+  chat_id    Int      @id @default(autoincrement())
+  user_id    Int?
+  role       String   // 'user' | 'assistant'
+  message    String
+  session_id String
+  created_at DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [user_id])
+  @@index([session_id])
+}
+
+model SystemSettings {
+  key        String   @id
+  value      String
+  updated_at DateTime @default(now())
+}

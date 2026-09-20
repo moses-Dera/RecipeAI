@@ -29,7 +29,7 @@ Consolidated from the original client PRD (Emmanuel, UNN CS Dept, v1.0) plus eve
 - 30-min inactivity expiry
 - **[ADDITION] OAuth (Google) alongside email/password** — requires nullable `password`, NextAuth `Account` table, and a decision on account-linking behavior (see §7)
 - **[ADDITION] RBAC via a `role` enum (`user` / `admin`)** on User — replaces the original hardcoded-admin idea
-- Guests can browse/search/chatbot/export/share without an account
+- Guests can browse, search, and use the chatbot ephemerally without an account (they **cannot** export, share, or save).
 - Architecture is a **BFF (Backend-for-Frontend)** — API routes serve only this app's frontend, no external consumers, no separate gateway needed
 
 ### 3.2 Recipe Catalogue
@@ -43,10 +43,11 @@ Consolidated from the original client PRD (Emmanuel, UNN CS Dept, v1.0) plus eve
 - Free-text input (≤500 chars), full multi-turn history maintained
 - Recommends dishes by ingredients/mood/diet/skill/meal-time/occasion
 - Asks clarifying questions on ambiguous input
-- Persisted per-session to Chat_History (guests included, `user_id` nullable)
+- Persisted to Chat_History for **registered users only**. Guest chat sessions are ephemeral and are not saved to the database.
 - 503 + exact required copy on LLM failure
 - Config: `gpt-4o`, temp `0.7`, max_tokens `800`, top_p `0.9`, presence_penalty `0.3`, LangChain `ConversationChain`
 - **RAG grounding:** live catalogue (titles, region, ingredients, meal_type, occasion) injected into system prompt context at request time — no vector DB needed at current scale; migrate to `pgvector` if catalogue grows large
+- **[ADDITION] Context-Aware Chat:** If the user opens the chat while viewing a specific recipe, the frontend passes that recipe's ID/context to the backend. The LLM becomes aware of the exact meal being viewed, allowing users to ask "Can I substitute the palm oil in this recipe?"
 - **Post-generation validation (mandatory):** every recommended dish name is checked against the DB before a link is rendered — system prompt constrains behavior, this code enforces it
 - **[ADDITION] Context and validation are scoped per-user's visible recipe set** (own private recipes + all public ones) — prevents cross-user data leakage through the chatbot
 - Non-recommendation answers (general cooking knowledge, technique, substitutions) use the LLM's own knowledge, unconstrained — only dish-recommendation-with-link is gated
@@ -54,7 +55,7 @@ Consolidated from the original client PRD (Emmanuel, UNN CS Dept, v1.0) plus eve
 ### 3.4 Save / Collection
 - Save any visible recipe, duplicate blocked at DB level (`@@unique([user_id, recipe_id])`)
 - Personal note per saved recipe, removable
-- Guests see a login prompt instead of the save button
+- Guests see a login prompt instead of the Save, Export, or Share buttons.
 
 ### 3.5 [ADDITION] User-Generated Recipes & Publishing
 - Any authenticated user can create their own recipe (`owner_id = self`, `is_private = true` by default) — visible only to them
@@ -66,7 +67,7 @@ Consolidated from the original client PRD (Emmanuel, UNN CS Dept, v1.0) plus eve
 - Owner can **unpublish** at any time (`is_private → true` again, `owner_id` unchanged — ownership isn't transferred to the platform)
 
 ### 3.6 DOCX Export
-- Any recipe, any user, no login required, one click
+- Authenticated users only, one click. Guests see a login prompt.
 - Server-side (`docx` npm), no client dependency
 - Contents: title (H1), ingredient table, numbered steps, nutrition (if present), footer with source URL
 - Filename: slugified title
@@ -75,6 +76,12 @@ Consolidated from the original client PRD (Emmanuel, UNN CS Dept, v1.0) plus eve
 ### 3.7 Social Sharing (frontend-only, no backend module)
 - WhatsApp, Twitter/X, Facebook — pre-filled share text, Open Graph tags for Facebook
 - Client-triggered only, no auto-posting, no SDK data collection on load
+
+### 3.8 Admin Module & Dynamic LLM Configuration **[ADDITION]**
+A dedicated Admin Dashboard (`/dashboard?tab=admin`) protected by `role: "admin"`.
+- **SystemSettings Key-Value Store:** Stores dynamic configuration (`LLM_PROVIDER`, `LLM_BASE_URL`, `LLM_MODEL_NAME`, `LLM_API_KEY`) in the database.
+- **Hot-Swapping:** Allows admins to seamlessly switch the AI provider (e.g., from Google Gemini to local Ollama or NVIDIA NIMs) via the UI without modifying code or restarting the server. Useful for offline presentations.
+- **Platform Metrics:** Displays aggregate usage statistics (Total Users, Recipes, Chat history).
 - Fallback: copy-to-clipboard if share intent is blocked
 
 ---
@@ -119,7 +126,7 @@ Controller (route.ts) → Middleware (auth/RBAC/rate-limit) → Service → Repo
                                                          at the Controller boundary
 ```
 
-### 5.1 Modules (6 full backend + 1 frontend-only) — module-first, feature folders
+### 5.1 Modules (7 full backend + 1 frontend-only) — module-first, feature folders
 
 | Module | Controller | Service | Repository | DTO | Spec |
 |---|---|---|---|---|---|
@@ -129,6 +136,7 @@ Controller (route.ts) → Middleware (auth/RBAC/rate-limit) → Service → Repo
 | Chat | `api/chat` | `modules/chat/chat.service.ts` | `modules/chat/chat.repository.ts` | `modules/chat/chat.schema.ts` | `modules/chat/chat.test.ts` |
 | Saved | `api/saved/*` | `modules/saved/saved.service.ts` | `modules/saved/saved.repository.ts` | `modules/saved/saved.schema.ts` | `modules/saved/saved.test.ts` |
 | Export | `api/export/[id]` | `modules/export/export.service.ts` | uses Recipe's | `modules/export/export.schema.ts` | `modules/export/export.test.ts` |
+| Admin | `api/admin/*` | `modules/admin/admin.service.ts` | uses SystemSettings | `modules/admin/admin.schema.ts` | `modules/admin/admin.test.ts` |
 | **Share** | *(none — frontend only)* | `modules/share/shareLinks.ts` (util) | *(none)* | *(none)* | `modules/share/shareLinks.test.ts` |
 
 Each module is a self-contained folder — service, repository, schema, and spec for that module all live together, instead of being split across `services/`, `repositories/`, `schemas/` directories. Share has no backend surface — no DB interaction, no validation need — so it's a lighter folder with just a util and a spec, no controller/repository/DTO forced onto it.
@@ -150,7 +158,8 @@ app/
 │   ├── recipes/route.ts, [id]/route.ts, [id]/publish/route.ts
 │   ├── chat/route.ts
 │   ├── saved/route.ts, [saveId]/route.ts
-│   └── export/[id]/route.ts
+│   ├── export/[id]/route.ts
+│   └── admin/route.ts
 lib/
 ├── modules/
 │   ├── auth/
@@ -353,6 +362,10 @@ model ChatHistory {
 | OAuth (Google) + BFF + JWT httpOnly cookies | Final — approved by client |
 | Admin recipe creation via RBAC, not env var | Final — implement |
 | Module-first (feature folder) structure over layer-first | Final — implement |
+| Strict Guest Permissions (no export/share, ephemeral chat) | Final — approved by client |
+| Context-Aware Chat (RAG knows active recipe page) | Final — approved by client |
+| Next.js Intercepting Routes (Recipe modal over feed) | Final — approved by client |
+| Auth Guard Modal (No jarring redirects for saves) | Final — approved by client |
 
 ## 14. Resolved Items
 
