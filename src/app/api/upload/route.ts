@@ -45,30 +45,28 @@ export async function POST(req: NextRequest) {
 
     let url = "";
 
-    // In production, we upload to Cloudflare R2 (S3-compatible)
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" && process.env.S3_ENDPOINT && process.env.S3_BUCKET) {
       const s3Client = new S3Client({
         region: "auto",
-        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        endpoint: process.env.S3_ENDPOINT,
         credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || "",
         },
       });
 
       await s3Client.send(
         new PutObjectCommand({
-          Bucket: process.env.R2_BUCKET_NAME,
+          Bucket: process.env.S3_BUCKET,
           Key: `recipes/${uniqueName}`,
           Body: buffer,
           ContentType: file.type,
         })
       );
 
-      const publicUrl = process.env.R2_PUBLIC_URL?.replace(/\/$/, "");
-      url = `${publicUrl}/recipes/${uniqueName}`;
+      url = `/api/images/recipes/${uniqueName}`;
     } else {
-      // In development, save locally
+      // Fallback to local storage if S3 is not configured
       const uploadDir = path.join(process.cwd(), "public", "uploads", "recipes");
       await mkdir(uploadDir, { recursive: true });
 

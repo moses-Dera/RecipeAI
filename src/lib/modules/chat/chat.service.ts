@@ -3,113 +3,235 @@ import { chatRepository } from "./chat.repository";
 import { ChatMessageDTO, ChatMessageSchema } from "./chat.schema";
 import { getAIModel } from "../../llm/provider";
 import { recipeRepository } from "../recipe/recipe.repository";
-import { HumanMessage, AIMessage, SystemMessage } from "@langchain/core/messages";
+import { HumanMessage, AIMessage, SystemMessage, ToolMessage } from "@langchain/core/messages";
+import { tool } from "@langchain/core/tools";
+import { z } from "zod";
+import { EmbeddingModel, FlagEmbedding } from "fastembed";
+import { prisma } from "@/lib/db/prisma";
 
-const CHEF_ADA_PROMPT = `You are Chef Ada, a warm, knowledgeable, and passionate expert in traditional Nigerian cuisine.
-Your goal is to help users discover, learn, and master Nigerian dishes like Jollof Rice, Egusi Soup, Suya, and more.
-Always be encouraging, use a friendly tone, and provide clear, structured recipes or advice.
+const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant.
+Your goal is to help the user with recipes, cooking techniques, and meal planning.
+
+1. You have a built-in search tool to find recipes in the user's RecipeAI catalogue. Use it when the user asks for specific recipes or ingredients they might have saved.
+2. You ALSO have extensive general knowledge about world cuisines, nutrition, and cooking. You are fully allowed to provide recipes, tips, and food knowledge from your own training data if the user asks a general question or if a recipe is not found in the database.
+3. Be friendly, concise, and helpful. Always format your recipes beautifully.
 If a user asks for a recipe, provide a clear list of ingredients and step-by-step instructions.`;
 
+const exportRecipeTool = tool(
+  async ({ recipeId }: { recipeId: number }) => {
+    return `Tell the user to click the following link to download the recipe document: [Download Recipe](/api/export/${recipeId})`;
+  },
+  {
+    name: "export_recipe",
+    description: "Generates an export link for a recipe. Use this when the user explicitly asks to export, download, or save a recipe as a document.",
+    schema: z.object({
+      recipeId: z.number().describe("The ID of the recipe to export")
+    })
+  }
+);
+
+
+
+// We can instantiate it lazily or globally. Globally is better for performance so it stays loaded.
+let embeddingModel: FlagEmbedding | null = null;
+const getEmbeddingModel = async () => {
+  if (!embeddingModel) {
+    embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGEBaseEN });
+  }
+  return embeddingModel;
+};
+
+const searchRecipesTool = tool(
+  async ({ query }: { query: string }) => {
+    try {
+      const model = await getEmbeddingModel();
+      const embeddingIterator = model.embed([query]);
+      let vectorObj;
+      for await (const batch of embeddingIterator) {
+        vectorObj = batch[0];
+      }
+      if (!vectorObj) throw new Error("No embedding generated");
+      const vectorArray = Array.from(vectorObj);
+      const vectorFormatted = `[${vectorArray.join(',')}]`;
+
+      // Perform cosine similarity search (using <=> operator)
+      const matches = await prisma.$queryRaw<any[]>`
+        SELECT r.recipe_id, r.title, r.region, r.meal_type, r.prep_time_min
+        FROM "Recipe" r
+        JOIN "RecipeEmbedding" e ON r.recipe_id = e.recipe_id
+        ORDER BY e.embedding <=> ${vectorFormatted}::vector
+        LIMIT 3;
+      `;
+
+      if (!matches || matches.length === 0) {
+        return `No semantically related recipes found for "${query}".`;
+      }
+      
+      return `Found related recipes:\n` + matches.map((r: any) => 
+        `- ID ${r.recipe_id}: ${r.title} (${r.region || 'Unknown Region'} ${r.meal_type || ''})`
+      ).join("\n");
+    } catch (e) {
+      console.error("Semantic search failed:", e);
+      return `Search failed. Please fall back to generic catalogue recommendations.`;
+    }
+  },
+  {
+    name: "search_recipes",
+    description: "Performs an AI semantic search for recipes in the database based on ingredients, feelings, flavor profiles, or regions. Use this whenever the user asks for recommendations.",
+    schema: z.object({
+      query: z.string().describe("The semantic search query")
+    })
+  }
+);
+
+const tools = [exportRecipeTool, searchRecipesTool];
+const toolsByName = {
+  export_recipe: exportRecipeTool,
+  search_recipes: searchRecipesTool
+};
+
 export class ChatService {
-  async getChatHistory(userId: number, sessionId: string) {
-    return chatRepository.getHistory(userId, sessionId);
+  async getChatHistory(userId: number | undefined, sessionId: string) {
+    return chatRepository.getHistory(sessionId, userId);
   }
 
-  async processMessage(userId: number | undefined, data: ChatMessageDTO) {
+  async processMessageStream(userId: number | undefined, data: ChatMessageDTO) {
     const validated = ChatMessageSchema.parse(data);
 
-    // Save user message to database only if authenticated
-    if (userId) {
-      await chatRepository.saveMessage({
-        user_id: userId,
-        role: 'user',
-        message: validated.message,
-        session_id: validated.session_id,
-      });
+    // Fetch full conversation history and RAG context concurrently, with fail-safes for slow DB
+    let historyRecords: any[] = [];
+
+    try {
+      // Always fetch history reliably
+      historyRecords = await this.getChatHistory(userId, validated.session_id).catch(() => []);
+    } catch (e) {
+      console.warn("History fetch skipped due to error:", e);
     }
 
-    // Fetch full conversation history for context (DB if auth, ephemeral if guest)
-    let history: { role: string; message: string }[] = [];
-    if (userId) {
-      history = await this.getChatHistory(userId, validated.session_id);
-    } else if (validated.ephemeral_history) {
-      history = validated.ephemeral_history.map(msg => ({
-        role: msg.role,
-        message: msg.content
-      }));
-      // Append the current message since it's not saved to DB
-      history.push({ role: 'user', message: validated.message });
-    } else {
-      history = [{ role: 'user', message: validated.message }];
+    let history: { role: string; message: string }[] = historyRecords.map((msg: any) => ({
+      role: msg.role,
+      message: msg.message
+    }));
+
+    // Append the current message
+    history.push({ role: 'user', message: validated.message });
+
+    // Save user message to database (fire and forget so we don't block)
+    chatRepository.saveMessage({
+      user_id: userId || null,
+      role: 'user',
+      message: validated.message,
+      session_id: validated.session_id,
+    }).catch(e => console.error("Failed to save user message:", e));
+
+    let systemPromptWithRAG = CHEF_ADA_PROMPT;
+
+    // Page Content Awareness
+    if (validated.context?.currentPath) {
+      const match = validated.context.currentPath.match(/\/recipe\/(\d+)/);
+      if (match) {
+        const recipeId = parseInt(match[1]);
+        try {
+          let currentRecipe = await recipeRepository.findByIdVisible(recipeId, userId || undefined);
+          if (currentRecipe) {
+            systemPromptWithRAG += `\n\n[PAGE CONTEXT]: The user is currently viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). If they ask questions about "this recipe", refer to this context. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
+          }
+        } catch (e) {
+          // Ignore if not found
+        }
+      }
     }
-
-    // RAG Grounding: Fetch visible recipes to give Ada actual knowledge
-    const { recipes } = await recipeService.getAllRecipes(1, 10);
-    const catalogueContext = recipes.map((r: any) => `- ${r.title}: ${r.region || 'Unknown Region'}, Prep: ${r.prep_time_min} mins`).join("\n");
-
-    const systemPromptWithRAG = `${CHEF_ADA_PROMPT}
-
-Here is the live catalogue of recipes currently available in the database:
-${catalogueContext}
-
-Important Rules:
-1. ONLY recommend dishes that are explicitly listed in the catalogue above.
-2. If a user asks for a recipe that is NOT in the catalogue, politely explain that you don't have that specific recipe in the system yet, but offer something similar from the catalogue.
-`;
 
     // Map history to LangChain message types
-    const messages = [
+    const messages: any[] = [
       new SystemMessage(systemPromptWithRAG),
       ...history.map(msg => 
         msg.role === 'user' ? new HumanMessage(msg.message) : new AIMessage(msg.message)
       )
     ];
 
-    try {
-      // Get the dynamically configured AI model
-      const model = await getAIModel();
+    const encoder = new TextEncoder();
+    
+    // Return a standard web stream
+    return new ReadableStream({
+      async start(controller) {
+        try {
+          const baseModel = await getAIModel();
+          // Bind tools
+          const modelWithTools = typeof baseModel.bindTools === 'function' 
+            ? baseModel.bindTools(tools) 
+            : baseModel;
+          
+          let fullResponseText = "";
+          let finalToolCalls: any[] = [];
+          let iterations = 0;
+          let isToolCall = false;
 
-      // Invoke the model with the conversation history
-      const response = await model.invoke(messages);
-      const aiResponseText = response.content.toString();
+          // Helper to consume a stream and enqueue chunks
+          const consumeStream = async (stream: any) => {
+             isToolCall = false;
+             fullResponseText = "";
+             finalToolCalls = [];
+             for await (const chunk of stream) {
+                if (chunk.tool_calls && chunk.tool_calls.length > 0) {
+                   isToolCall = true;
+                   finalToolCalls = chunk.tool_calls;
+                } else if (!isToolCall && chunk.content) {
+                   const textChunk = chunk.content.toString();
+                   fullResponseText += textChunk;
+                   controller.enqueue(encoder.encode(textChunk));
+                }
+             }
+          };
 
-      // Save AI response to database if authenticated
-      if (userId) {
-        return await chatRepository.saveMessage({
-          user_id: userId,
-          role: 'assistant',
-          message: aiResponseText,
-          session_id: validated.session_id,
-        });
-      } else {
-        // Return ephemeral response for guests
-        return {
-          role: 'assistant',
-          message: aiResponseText,
-          session_id: validated.session_id,
-        };
+          let responseStream = await modelWithTools.stream(messages);
+          await consumeStream(responseStream);
+
+          while (isToolCall && iterations < 2) {
+             const toolMessage = new AIMessage({ content: "", tool_calls: finalToolCalls });
+             messages.push(toolMessage);
+
+             for (const toolCall of finalToolCalls) {
+               const selectedTool = toolsByName[toolCall.name as keyof typeof toolsByName];
+               if (selectedTool) {
+                 const toolResult = await (selectedTool as any).invoke(toolCall.args);
+                 messages.push(new ToolMessage({ tool_call_id: toolCall.id!, content: toolResult }));
+               } else {
+                 messages.push(new ToolMessage({ tool_call_id: toolCall.id!, content: "Tool not found." }));
+               }
+             }
+
+             // Restart the stream for the final answer
+             responseStream = await modelWithTools.stream(messages);
+             await consumeStream(responseStream);
+             iterations++;
+          }
+
+          // Save AI response to database universally (with fail-safe to prevent stream crash)
+          await chatRepository.saveMessage({
+            user_id: userId || null,
+            role: 'assistant',
+            message: fullResponseText,
+            session_id: validated.session_id,
+          }).catch(e => console.error("Failed to save AI message:", e));
+
+          controller.close();
+        } catch (error: any) {
+          console.error("AI Model Stream Error:", error?.message || error);
+          const errorMsg = "\n\nI'm sorry, I'm having a little trouble connecting right now. Please try again in a moment.";
+          controller.enqueue(encoder.encode(errorMsg));
+          
+          await chatRepository.saveMessage({
+            user_id: userId || null,
+            role: 'assistant',
+            message: errorMsg,
+            session_id: validated.session_id,
+          }).catch(e => console.error("Failed to save AI error message:", e));
+          
+          controller.close();
+        }
       }
-
-    } catch (error: any) {
-      console.error("AI Model Error:", error);
-      // Fallback message if AI fails
-      const errorMsg = "I'm sorry, I'm having trouble thinking right now. Please check my AI Provider settings in the Admin panel or ensure your API key is correct.";
-      
-      if (userId) {
-        return await chatRepository.saveMessage({
-          user_id: userId,
-          role: 'assistant',
-          message: errorMsg,
-          session_id: validated.session_id,
-        });
-      } else {
-        return {
-          role: 'assistant',
-          message: errorMsg,
-          session_id: validated.session_id,
-        };
-      }
-    }
+    });
   }
 }
 

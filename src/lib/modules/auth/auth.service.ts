@@ -119,7 +119,11 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+
       // User is available on the first sign in
       if (user) {
         if (account?.provider === "google") {
@@ -130,15 +134,17 @@ export const authOptions: NextAuthOptions = {
           if (dbUser) {
             token.id = dbUser.user_id.toString();
             token.role = dbUser.role;
+            token.name = dbUser.username;
           }
         } else {
           // Credentials login
           token.id = user.id;
           const dbUser = await prisma.user.findUnique({
             where: { user_id: parseInt(user.id as string) },
-            select: { role: true },
+            select: { role: true, username: true },
           });
           token.role = dbUser?.role || "user";
+          token.name = dbUser?.username || user.name;
         }
       }
       return token;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiClock, FiMapPin } from "react-icons/fi";
 import Image from "next/image";
@@ -16,6 +16,18 @@ const REGIONS = ["All", "West Africa", "Northern Nigeria", "South East", "South 
 export default function ExploreGallery({ initialRecipes }: ExploreGalleryProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeRegion, setActiveRegion] = useState("All");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Filter recipes based on search query and active region
   const filteredRecipes = useMemo(() => {
@@ -31,46 +43,79 @@ export default function ExploreGallery({ initialRecipes }: ExploreGalleryProps) 
 
   return (
     <div className="w-full">
-      {/* Header & Search */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+      {/* Header & Controls */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
         <div>
           <h1 className="text-5xl md:text-6xl font-heading font-bold text-text-primary mb-4">
             Explore <span className="text-brand-primary italic">Recipes</span>
           </h1>
           <p className="text-text-secondary text-lg max-w-xl">
-            Discover our collection of authentic, flavorful dishes. Search by name, ingredient, or region.
+            Discover our collection of authentic, flavorful dishes. Search by name, ingredient, or filter by region.
           </p>
         </div>
         
-        <div className="relative w-full md:w-96 shrink-0">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-secondary">
-            <FiSearch size={20} />
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto shrink-0 gap-4">
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-72 xl:w-96">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-secondary">
+              <FiSearch size={20} />
+            </div>
+            <input
+              type="text"
+              placeholder="Search recipes or ingredients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3.5 bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium"
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search recipes or ingredients..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm"
-          />
-        </div>
-      </div>
 
-      {/* Category Pills */}
-      <div className="flex flex-wrap gap-3 mb-12">
-        {REGIONS.map((region) => (
-          <button
-            key={region}
-            onClick={() => setActiveRegion(region)}
-            className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
-              activeRegion === region 
-                ? "bg-brand-primary text-white shadow-md" 
-                : "bg-bg-surface text-text-secondary hover:bg-brand-primary/10 hover:text-brand-primary border border-text-secondary/10"
-            }`}
-          >
-            {region}
-          </button>
-        ))}
+          {/* Region Filter Dropdown (Custom) */}
+          <div className="relative w-full sm:w-56" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full pl-11 pr-10 py-3.5 flex justify-between items-center bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary hover:border-brand-primary/30 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium cursor-pointer"
+            >
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-secondary">
+                <FiMapPin size={20} />
+              </div>
+              <span className="truncate">{activeRegion === "All" ? "All Regions" : activeRegion}</span>
+              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-text-secondary">
+                <svg className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </button>
+
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute z-50 w-full mt-2 bg-bg-surface border border-text-secondary/10 rounded-2xl shadow-xl overflow-hidden py-2"
+                >
+                  {REGIONS.map((region) => (
+                    <button
+                      key={region}
+                      onClick={() => {
+                        setActiveRegion(region);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors ${
+                        activeRegion === region 
+                          ? "bg-brand-primary/10 text-brand-primary" 
+                          : "text-text-primary hover:bg-text-secondary/5"
+                      }`}
+                    >
+                      {region === "All" ? "All Regions" : region}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
 
       {/* Grid */}
@@ -128,7 +173,7 @@ export default function ExploreGallery({ initialRecipes }: ExploreGalleryProps) 
             <FiSearch size={32} />
           </div>
           <h3 className="text-2xl font-heading font-bold text-text-primary mb-2">No recipes found</h3>
-          <p className="text-text-secondary">Try adjusting your search or filters to find what you're looking for.</p>
+          <p className="text-text-secondary">Try adjusting your search or filters to find what you&apos;re looking for.</p>
         </div>
       )}
     </div>

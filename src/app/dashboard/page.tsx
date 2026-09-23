@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { FiBook, FiHeart, FiPlus, FiEdit2, FiTrash2, FiTrash } from "react-icons/fi";
 import AdminPanel from "@/components/dashboard/AdminPanel";
-import CreateRecipeModal from "@/components/dashboard/CreateRecipeModal";
 import Image from "next/image";
 import Link from "next/link";
 import { useToast } from "@/components/ui/ToastContext";
@@ -13,8 +12,7 @@ import { signOut, useSession } from "next-auth/react";
 function DashboardContent() {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "recipes";
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [recipeToEdit, setRecipeToEdit] = useState<any>(null);
+  const [drafts, setDrafts] = useState<any[]>([]);
   
   const [recipes, setRecipes] = useState<any[]>([]);
   const [recipesPage, setRecipesPage] = useState(1);
@@ -55,7 +53,7 @@ function DashboardContent() {
       const res = await fetch(`/api/saved?page=${page}&limit=12`);
       if (res.ok) {
         const data = await res.json();
-        const extractedRecipes = data.savedRecipes.map((s: any) => s.recipe);
+        const extractedRecipes = (data.saved || []).map((s: any) => s.recipe);
         if (page === 1) setSavedRecipes(extractedRecipes);
         else setSavedRecipes(prev => [...prev, ...extractedRecipes]);
         setSavedPage(data.page);
@@ -70,8 +68,17 @@ function DashboardContent() {
 
   useEffect(() => {
     if (tab === "recipes") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchRecipes(1);
+      // Load drafts
+      try {
+        const draftsObj = JSON.parse(localStorage.getItem('recipe_drafts_index') || '{}');
+        const draftsArray = Object.values(draftsObj).sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setDrafts(draftsArray);
+      } catch(e) {}
     } else if (tab === "saved") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchSaved(1);
     }
   }, [tab]);
@@ -131,44 +138,90 @@ function DashboardContent() {
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-text-primary capitalize">
-            {tab.replace("-", " ")}
+            {tab === "recipes" ? "My Recipes" : tab.replace("-", " ")}
           </h1>
           <p className="text-text-secondary mt-2">
-            {tab === "admin" 
-              ? "Manage system settings, AI providers, and platform metrics."
-              : "Manage your culinary journey and saved favorites."}
+            Manage your culinary journey and saved favorites.
           </p>
         </div>
 
         {tab === "recipes" && (
-          <button 
-            onClick={() => { setRecipeToEdit(null); setIsCreateModalOpen(true); }}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/20"
+          <Link 
+            href="/recipe/create"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/20"
           >
             <FiPlus className="text-xl" /> Add Custom Recipe
-          </button>
+          </Link>
         )}
       </header>
+
+      {/* Navigation Tabs (Mobile Only) */}
+      <div className="flex md:hidden overflow-x-auto border-b border-text-secondary/10 mb-8 gap-6 hide-scrollbar px-1">
+        {[
+          { id: "recipes", label: "My Recipes", icon: <FiBook className="mr-2 inline" /> },
+          { id: "saved", label: "Saved Recipes", icon: <FiHeart className="mr-2 inline" /> },
+        ].map((t) => (
+          <Link
+            key={t.id}
+            href={`/dashboard?tab=${t.id}`}
+            className={`pb-4 font-bold transition-colors whitespace-nowrap border-b-2 ${
+              tab === t.id ? "text-brand-primary border-brand-primary" : "text-text-secondary border-transparent hover:text-text-primary"
+            }`}
+          >
+            {t.icon}
+            {t.label}
+          </Link>
+        ))}
+      </div>
 
       {/* Render tab content based on searchParams */}
       <div className="w-full">
         {tab === "recipes" && (
-          <div>
-            {isLoadingRecipes && recipes.length === 0 ? (
-              <div className="text-center py-10 text-text-secondary">Loading your recipes...</div>
-            ) : recipes.length === 0 ? (
-              <div className="p-8 border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center text-center">
-                <FiBook className="text-5xl text-brand-primary/50 mb-4" />
-                <h3 className="font-heading text-xl font-bold">Your Recipe Book is Empty</h3>
-                <p className="text-text-secondary max-w-sm mt-2 mb-6">Start talking to Chef Ada or add your own traditional Nigerian recipe manually!</p>
-                <button 
-                  onClick={() => { setRecipeToEdit(null); setIsCreateModalOpen(true); }}
-                  className="text-brand-primary font-bold hover:opacity-80 transition-opacity"
-                >
-                  + Create Recipe Manually
-                </button>
+          <div className="space-y-12">
+            {drafts.length > 0 && (
+              <div>
+                <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+                  <FiEdit2 className="text-text-secondary" /> Unpublished Drafts
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {drafts.map((draft) => (
+                    <Link
+                      key={draft.id}
+                      href={draft.recipeId ? `/recipe/${draft.recipeId}/edit` : `/recipe/create`}
+                      className="bg-bg-surface border border-brand-primary/20 rounded-xl p-4 hover:shadow-md transition-shadow flex flex-col justify-between"
+                    >
+                      <div>
+                        <h3 className="font-bold text-text-primary line-clamp-1">{draft.title || "Untitled Recipe"}</h3>
+                        <p className="text-xs text-text-secondary mt-1">
+                          Last edited: {new Date(draft.updatedAt).toLocaleDateString()} at {new Date(draft.updatedAt).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      <div className="mt-4 text-brand-primary text-sm font-bold flex items-center gap-1">
+                        Continue editing &rarr;
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            ) : (
+            )}
+            
+            <div>
+              <h2 className="font-heading text-xl font-bold mb-4">Published Recipes</h2>
+              {isLoadingRecipes && recipes.length === 0 ? (
+                <div className="text-center py-10 text-text-secondary">Loading your recipes...</div>
+              ) : recipes.length === 0 ? (
+                <div className="p-8 border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center text-center">
+                  <FiBook className="text-5xl text-brand-primary/50 mb-4" />
+                  <h3 className="font-heading text-xl font-bold">Your Recipe Book is Empty</h3>
+                  <p className="text-text-secondary max-w-sm mt-2 mb-6">Start talking to Chef Ada or add your own traditional Nigerian recipe manually!</p>
+                  <Link 
+                    href="/recipe/create"
+                    className="text-brand-primary font-bold hover:opacity-80 transition-opacity"
+                  >
+                    + Create Recipe Manually
+                  </Link>
+                </div>
+              ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {recipes.map((recipe: any) => (
@@ -187,13 +240,13 @@ function DashboardContent() {
                         </Link>
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-text-secondary/10">
                           <div className="flex gap-2">
-                            <button
-                              onClick={() => { setRecipeToEdit(recipe); setIsCreateModalOpen(true); }}
+                            <Link
+                              href={`/recipe/${recipe.recipe_id}/edit`}
                               className="p-2 bg-bg-primary text-text-secondary hover:text-brand-primary hover:bg-brand-primary/10 rounded-lg transition-colors"
                               title="Edit"
                             >
                               <FiEdit2 size={16} />
-                            </button>
+                            </Link>
                             <button
                               onClick={() => handleDeleteRecipe(recipe.recipe_id)}
                               className="p-2 bg-bg-primary text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
@@ -220,9 +273,10 @@ function DashboardContent() {
               </>
             )}
           </div>
-        )}
+        </div>
+      )}
 
-        {tab === "saved" && (
+      {tab === "saved" && (
           <div>
             {isLoadingSaved && savedRecipes.length === 0 ? (
                <div className="text-center py-10 text-text-secondary">Loading saved recipes...</div>
@@ -275,63 +329,7 @@ function DashboardContent() {
             )}
           </div>
         )}
-
-        {tab === "settings" && (
-          <div className="space-y-6">
-            <div className="bg-bg-surface border border-text-secondary/10 rounded-2xl p-6 shadow-sm">
-              <h3 className="font-heading text-xl font-bold mb-4">Profile Settings</h3>
-              <p className="text-text-secondary mb-6">Update your personal information.</p>
-              <div className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-1">Display Name</label>
-                  <input type="text" className="w-full px-4 py-2 rounded-xl border border-text-secondary/20 bg-bg-default text-text-primary" defaultValue={session?.user?.name || ""} />
-                </div>
-                <button className="bg-brand-primary text-white px-6 py-2 rounded-xl font-medium hover:bg-brand-secondary transition-colors">Save Changes</button>
-              </div>
-            </div>
-
-            <div className="bg-bg-surface border border-red-500/20 rounded-2xl p-6 shadow-sm">
-              <h3 className="font-heading text-xl font-bold text-red-500 mb-4 flex items-center gap-2">
-                <FiTrash /> Danger Zone
-              </h3>
-              <p className="text-text-secondary mb-4 max-w-xl">
-                Deleting your account is permanent. All your private recipes, saved recipes, and chat history will be removed. Any public recipes you created will remain available to the community but will no longer be linked to your account.
-              </p>
-              <div className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-1">Type DELETE to confirm</label>
-                  <input 
-                    type="text" 
-                    value={deleteConfirmText}
-                    onChange={(e) => setDeleteConfirmText(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-red-500/20 bg-bg-default text-text-primary focus:outline-none focus:border-red-500" 
-                    placeholder="DELETE" 
-                  />
-                </div>
-                <button 
-                  onClick={handleDeleteAccount}
-                  disabled={isDeletingAccount || deleteConfirmText !== "DELETE"}
-                  className="bg-red-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-red-600 transition-colors disabled:opacity-50"
-                >
-                  {isDeletingAccount ? "Deleting..." : "Delete Account"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {tab === "admin" && <AdminPanel />}
       </div>
-
-      <CreateRecipeModal 
-        isOpen={isCreateModalOpen} 
-        onClose={() => {
-          setIsCreateModalOpen(false);
-          setRecipeToEdit(null);
-        }} 
-        recipeToEdit={recipeToEdit}
-        onSuccess={() => fetchRecipes(1)}
-      />
     </div>
   );
 }

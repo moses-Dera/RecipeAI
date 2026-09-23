@@ -82,32 +82,32 @@ export default function LandingHero() {
         {/* Back Card (Left) */}
         <motion.div
           initial={{ opacity: 0, x: 100, rotate: 0 }}
-          animate={{ opacity: 0.6, x: -40, rotate: -15 }}
+          animate={{ opacity: 0.9, x: -40, rotate: -15 }}
           transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
           className="absolute top-10 left-0 w-64 h-80"
         >
           <motion.div
             style={{ x: leftCardX, y: leftCardY, rotate: leftCardRotate }}
-            className="w-full h-full rounded-2xl overflow-hidden border-4 border-bg-surface bg-brand-primary/10 shadow-xl"
+            className="w-full h-full rounded-2xl overflow-hidden border-4 border-bg-surface shadow-xl"
           >
-            <Image src="/images/placeholder-2.jpg" alt="Recipe 2" fill className="object-cover opacity-0" />
-            <div className="absolute inset-0 bg-brand-primary/5 mix-blend-multiply" />
+            <Image src="/images/home.jpeg" alt="Chef Ada" fill className="object-cover" />
+            {/* Removed the dark overlay to make it brighter */}
           </motion.div>
         </motion.div>
 
         {/* Back Card (Right) */}
         <motion.div
           initial={{ opacity: 0, x: -100, rotate: 0 }}
-          animate={{ opacity: 0.8, x: 120, rotate: 15 }}
+          animate={{ opacity: 0.95, x: 120, rotate: 15 }}
           transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
           className="absolute top-10 right-0 w-64 h-80"
         >
           <motion.div
             style={{ x: rightCardX, y: rightCardY, rotate: rightCardRotate }}
-            className="w-full h-full rounded-2xl overflow-hidden border-4 border-bg-surface bg-brand-secondary/10 shadow-xl"
+            className="w-full h-full rounded-2xl overflow-hidden border-4 border-bg-surface shadow-xl"
           >
-            <Image src="/images/placeholder-3.jpg" alt="Recipe 3" fill className="object-cover opacity-0" />
-            <div className="absolute inset-0 bg-brand-secondary/5 mix-blend-multiply" />
+            <Image src="/images/home3.jpeg" alt="Traditional Food" fill className="object-cover" />
+            {/* Removed the dark overlay to make it brighter */}
           </motion.div>
         </motion.div>
 
@@ -123,7 +123,7 @@ export default function LandingHero() {
             whileHover={{ scale: 1.05 }}
             className="w-full h-full rounded-2xl overflow-hidden shadow-2xl shadow-brand-primary/20 border-4 border-bg-surface bg-bg-primary flex flex-col justify-end"
           >
-            <Image src="/images/placeholder-1.jpg" alt="Featured Recipe" fill className="object-cover opacity-0" />
+            <Image src="/images/partyjollof.jpeg" alt="Featured Recipe" fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-bg-surface via-transparent to-transparent z-10" />
             <div className="relative z-20 p-6 bg-bg-surface/80 backdrop-blur-sm border-t border-text-secondary/10">
               <h3 className="text-text-primary font-bold font-heading text-xl">Classic Party Jollof</h3>

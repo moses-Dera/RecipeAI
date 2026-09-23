@@ -70,13 +70,13 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
 
   const handleExport = async () => {
     try {
-      const res = await fetch(`/api/export?recipeId=${recipe.recipe_id}&format=txt`);
+      const res = await fetch(`/api/export/${recipe.recipe_id}`);
       if (!res.ok) throw new Error();
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${recipe.title.replace(/\s+/g, "_")}.txt`;
+      a.download = `${recipe.title.replace(/\s+/g, "_")}.docx`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Recipe exported!");
@@ -162,8 +162,24 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
         </div>
       </div>
 
+      {/* Gallery Section */}
+      {recipe.gallery && recipe.gallery.length > 0 && (
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-4">
+          <h2 className="font-heading text-xl font-bold text-text-primary mb-4 border-b border-text-secondary/10 pb-2">
+            Recipe Gallery
+          </h2>
+          <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar">
+            {recipe.gallery.map((url, idx) => (
+              <div key={idx} className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shrink-0 border border-text-secondary/10 shadow-sm hover:shadow-md transition-shadow">
+                <Image src={url} alt={`${recipe.title} gallery image ${idx + 1}`} fill className="object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Content Section */}
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 md:py-16">
+      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 md:py-16 pt-8 md:pt-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
           {/* Left Column: Ingredients + Nutrition */}
           <div className="lg:col-span-1 space-y-10">

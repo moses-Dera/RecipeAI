@@ -12,6 +12,10 @@ export class UserService {
     const validated = UpdateProfileSchema.parse(data);
     return userRepository.update(userId, validated);
   }
+
+  async deleteAccount(userId: number) {
+    return userRepository.deleteAccount(userId);
+  }
 }
 
 export const userService = new UserService();

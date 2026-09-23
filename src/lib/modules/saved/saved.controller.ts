@@ -11,7 +11,7 @@ export class SavedController {
       const saved = await savedService.getUserSavedRecipes(parseInt(user.id as string));
       return NextResponse.json({ saved });
     } catch (error: any) {
-      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+      return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
     }
   }
 

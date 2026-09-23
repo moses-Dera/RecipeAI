@@ -10,6 +10,18 @@ export class RecipeService {
     return recipeRepository.findByOwner(ownerId, page, limit);
   }
 
+  async getTrendingRecipes(limit = 12) {
+    return recipeRepository.findTrending(limit);
+  }
+
+  async incrementViewCount(id: number) {
+    try {
+      await recipeRepository.incrementViewCount(id);
+    } catch (error) {
+      // Ignore errors (e.g. if recipe doesn't exist) so it doesn't break the page load
+    }
+  }
+
   async getRecipeById(id: number, userId?: number) {
     const recipe = await recipeRepository.findByIdVisible(id, userId);
     if (!recipe) {

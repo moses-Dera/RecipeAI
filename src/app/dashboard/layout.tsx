@@ -5,31 +5,24 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiBookOpen, FiHeart, FiSettings, FiShield } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
-
-// Mock user session for UI demonstration
-const MOCK_USER = {
-  name: "Chef Ada",
-  role: "admin", // Change to "user" to test hiding the admin tab
-};
-
+import { useSession } from "next-auth/react";
 import { Suspense } from "react";
 
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "recipes";
+
+  const userRole = (session?.user as any)?.role || "user";
+  const userName = session?.user?.name || "User";
 
   const navItems = [
     { id: "recipes", label: "My Recipes", icon: <FiBookOpen /> },
     { id: "saved", label: "Saved Recipes", icon: <FiHeart /> },
-    { id: "settings", label: "Settings", icon: <FiSettings /> },
   ];
 
-  if (MOCK_USER.role === "admin") {
-    navItems.push({ id: "admin", label: "Admin Control Panel", icon: <FiShield /> });
-  }
-
   return (
-    <div className="flex h-screen bg-bg-default pt-20">
+    <div className="flex min-h-[calc(100vh-8rem)] bg-bg-default rounded-2xl overflow-hidden shadow-sm border border-text-secondary/10">
       {/* Sidebar */}
       <aside className="w-64 hidden md:flex flex-col border-r border-text-secondary/10 bg-bg-surface p-6">
         <div className="flex items-center gap-4 mb-10">
@@ -37,8 +30,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             <FaUserCircle className="text-brand-primary" />
           </div>
           <div>
-            <h2 className="font-heading font-bold text-lg text-text-primary">{MOCK_USER.name}</h2>
-            <p className="text-xs text-text-secondary capitalize">{MOCK_USER.role} Account</p>
+            <h2 className="font-heading font-bold text-lg text-text-primary">{userName}</h2>
+            <p className="text-xs text-text-secondary capitalize">{userRole} Account</p>
           </div>
         </div>
 
@@ -67,7 +60,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-8 relative">
+      <main className="flex-1 p-4 md:p-8 relative">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>

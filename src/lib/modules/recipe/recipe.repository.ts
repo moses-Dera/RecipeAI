@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
 import { Prisma } from "@prisma/client";
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL || '',
+  token: process.env.KV_REST_API_TOKEN || '',
+});
 
 /**
  * Master visibility filter: Recipe is either public (is_private=false) or owned by the currentUser.
@@ -20,6 +26,14 @@ export class RecipeRepository {
     const skip = (page - 1) * limit;
     const where = recipeVisibilityFilter(userId);
 
+    const cacheKey = `recipes:visible:u${userId || 'anon'}:p${page}:l${limit}`;
+    try {
+      const cached = await redis.get<any>(cacheKey);
+      if (cached) return cached;
+    } catch (e) {
+      console.warn("Recipe cache miss/error:", e);
+    }
+
     const [recipes, total] = await Promise.all([
       prisma.recipe.findMany({
         where,
@@ -31,12 +45,42 @@ export class RecipeRepository {
       prisma.recipe.count({ where }),
     ]);
 
-    return {
+    const result = {
       recipes,
       total,
       page,
       totalPages: Math.ceil(total / limit),
     };
+
+    redis.set(cacheKey, result, { ex: 300 }).catch(e => console.error("Failed to cache recipes:", e)); // Cache for 5 mins
+
+    return result;
+  }
+
+  /**
+   * Find most viewed recipes
+   */
+  async findTrending(limit = 12) {
+    const where = recipeVisibilityFilter(undefined); // Public recipes only
+    
+    const recipes = await prisma.recipe.findMany({
+      where,
+      orderBy: { view_count: "desc" },
+      include: { owner: { select: { username: true } } },
+      take: limit,
+    });
+
+    return { recipes };
+  }
+
+  /**
+   * Increment the view count for a recipe
+   */
+  async incrementViewCount(id: number) {
+    return prisma.recipe.update({
+      where: { recipe_id: id },
+      data: { view_count: { increment: 1 } },
+    });
   }
 
   /**

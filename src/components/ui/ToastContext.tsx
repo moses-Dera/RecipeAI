@@ -36,11 +36,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, 3000);
   }, []);
 
-  const toast = {
+  const toast = React.useMemo(() => ({
     success: (message: string) => addToast(message, "success"),
     error: (message: string) => addToast(message, "error"),
     info: (message: string) => addToast(message, "info"),
-  };
+  }), [addToast]);
 
   return (
     <ToastContext.Provider value={{ toast }}>

@@ -1,8 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../src/lib/db/prisma";
 
 async function main() {
+  console.log("Cleaning up old platform recipes to prevent duplicates...");
+  await prisma.recipe.deleteMany({
+    where: { owner_id: null }, // Only delete platform recipes
+  });
+
   console.log("Seeding database with authentic Nigerian recipes...");
 
   const recipes = [
@@ -36,7 +39,8 @@ async function main() {
         "Onions provide quercetin, a powerful antioxidant",
       ]),
       region: "West Africa",
-      image_url: "/images/placeholder-1.jpg",
+      image_url: "/images/partyjollof.jpeg",
+      gallery: ["/images/partyjollof2.jpeg", "/images/partyjollof3.jpeg"],
       prep_time_min: 45,
       difficulty: "medium",
       is_private: false,
@@ -68,7 +72,8 @@ async function main() {
         "Low in carbohydrates, suitable for keto and low-carb diets",
       ]),
       region: "Northern Nigeria",
-      image_url: "/images/placeholder-2.jpg",
+      image_url: "/images/suya.jpeg",
+      gallery: ["/images/suya2.jpeg", "/images/suya3.jpeg"],
       prep_time_min: 30,
       difficulty: "medium",
       is_private: false,
@@ -103,7 +108,8 @@ async function main() {
         "Crayfish adds calcium and phosphorus for strong bones",
       ]),
       region: "South East",
-      image_url: "/images/placeholder-3.jpg",
+      image_url: "/images/poundedyamandegusi.jpeg",
+      gallery: ["/images/pondedyamandegusi2.jpeg", "/images/poundedyamandegusi3.jpeg"],
       prep_time_min: 60,
       difficulty: "hard",
       is_private: false,
@@ -135,7 +141,8 @@ async function main() {
         "Lemongrass supports digestion and has calming properties",
       ]),
       region: "South South",
-      image_url: "/images/placeholder-4.jpg",
+      image_url: "/images/peppersoup.jpeg",
+      gallery: ["/images/peppersoup2.jpeg", "/images/peppersoup3.jpeg"],
       prep_time_min: 40,
       difficulty: "easy",
       is_private: false,

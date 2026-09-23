@@ -12,7 +12,7 @@ export default function NotFound() {
           Recipe Not Found
         </h2>
         <p className="text-text-secondary mb-8">
-          It looks like this page has gone missing, or perhaps the recipe was kept a secret! Don't worry, there's plenty more to discover.
+          It looks like this page has gone missing, or perhaps the recipe was kept a secret! Don&apos;t worry, there&apos;s plenty more to discover.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

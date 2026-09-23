@@ -14,7 +14,7 @@ export function ToastContainer({ toasts }: { toasts: Toast[] }) {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-            className="pointer-events-auto flex items-center gap-3 px-6 py-4 rounded-xl shadow-xl shadow-black/10 backdrop-blur-md border bg-white/90 dark:bg-slate-900/90 min-w-[300px]"
+            className="pointer-events-auto flex items-center gap-3 px-6 py-4 rounded-xl shadow-xl shadow-black/10 backdrop-blur-md border bg-bg-surface/95 min-w-[300px]"
           >
             {toast.type === "success" && <FiCheckCircle className="text-green-500 text-xl flex-shrink-0" />}
             {toast.type === "error" && <FiAlertCircle className="text-red-500 text-xl flex-shrink-0" />}

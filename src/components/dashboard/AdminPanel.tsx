@@ -6,7 +6,6 @@ import { useToast } from "@/components/ui/ToastContext";
 import { FiUsers, FiBookOpen, FiMessageSquare, FiSettings, FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
 import Image from "next/image";
 import Link from "next/link";
-import CreateRecipeModal from "./CreateRecipeModal";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<"settings" | "recipes" | "users">("settings");
@@ -16,7 +15,7 @@ export default function AdminPanel() {
   const [baseUrl, setBaseUrl] = useState("");
   const [modelName, setModelName] = useState("");
   const [apiKey, setApiKey] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+
   
   const [metrics, setMetrics] = useState({
     totalUsers: 0,
@@ -48,7 +47,7 @@ export default function AdminPanel() {
       setProvider(data.settings.provider || "gemini");
       setBaseUrl(data.settings.baseUrl || "");
       setModelName(data.settings.modelName || "");
-      setApiKey(data.settings.apiKey || "");
+      setApiKey(data.settings.apiKeyConfigured ? "configured" : "");
       
       setMetrics({
         totalUsers: data.metrics.totalUsers || 0,
@@ -91,28 +90,14 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     Promise.all([fetchAdminData(), fetchRecipes(), fetchUsers()]).finally(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(false);
     });
   }, []);
 
-  const handleSaveSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    try {
-      const res = await fetch("/api/admin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider, baseUrl, modelName, apiKey }),
-      });
-      if (!res.ok) throw new Error();
-      toast.success("AI Provider settings updated successfully!");
-    } catch {
-      toast.error("Failed to update settings.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+
 
   const handleDeleteRecipe = async (id: number) => {
     if (!confirm("Are you sure you want to delete this recipe?")) return;
@@ -157,7 +142,7 @@ export default function AdminPanel() {
   return (
     <div className="space-y-8">
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
         {[
           { label: "Total Users", value: metrics.totalUsers, icon: <FiUsers /> },
           { label: "Total Recipes", value: metrics.totalRecipes, icon: <FiBookOpen /> },
@@ -181,28 +166,31 @@ export default function AdminPanel() {
         ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-text-secondary/10 gap-8">
+      {/* Admin Sub-navigation (Segmented Pills) */}
+      <div className="flex overflow-x-auto hide-scrollbar gap-2 p-1 bg-bg-surface border border-text-secondary/10 rounded-xl">
         <button
           onClick={() => setActiveTab("settings")}
-          className={`pb-4 font-bold transition-colors relative ${activeTab === "settings" ? "text-brand-primary" : "text-text-secondary hover:text-text-primary"}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold transition-all text-sm ${activeTab === "settings" ? "bg-brand-primary text-white shadow-md" : "text-text-secondary hover:bg-text-secondary/5 hover:text-text-primary"}`}
         >
-          <span className="flex items-center gap-2"><FiSettings /> AI Settings</span>
-          {activeTab === "settings" && <motion.div layoutId="admintab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
+          <FiSettings className="shrink-0" /> 
+          <span className="hidden sm:inline">AI Settings</span>
+          <span className="sm:hidden">Settings</span>
         </button>
         <button
           onClick={() => setActiveTab("recipes")}
-          className={`pb-4 font-bold transition-colors relative ${activeTab === "recipes" ? "text-brand-primary" : "text-text-secondary hover:text-text-primary"}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold transition-all text-sm ${activeTab === "recipes" ? "bg-brand-primary text-white shadow-md" : "text-text-secondary hover:bg-text-secondary/5 hover:text-text-primary"}`}
         >
-          <span className="flex items-center gap-2"><FiBookOpen /> Manage Recipes</span>
-          {activeTab === "recipes" && <motion.div layoutId="admintab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
+          <FiBookOpen className="shrink-0" /> 
+          <span className="hidden sm:inline">Manage Recipes</span>
+          <span className="sm:hidden">Recipes</span>
         </button>
         <button
           onClick={() => setActiveTab("users")}
-          className={`pb-4 font-bold transition-colors relative ${activeTab === "users" ? "text-brand-primary" : "text-text-secondary hover:text-text-primary"}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold transition-all text-sm ${activeTab === "users" ? "bg-brand-primary text-white shadow-md" : "text-text-secondary hover:bg-text-secondary/5 hover:text-text-primary"}`}
         >
-          <span className="flex items-center gap-2"><FiUsers /> Manage Users</span>
-          {activeTab === "users" && <motion.div layoutId="admintab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
+          <FiUsers className="shrink-0" /> 
+          <span className="hidden sm:inline">Manage Users</span>
+          <span className="sm:hidden">Users</span>
         </button>
       </div>
 
@@ -218,71 +206,43 @@ export default function AdminPanel() {
           >
             <div className="mb-6 border-b border-text-secondary/10 pb-4">
               <h3 className="font-heading text-xl font-bold text-text-primary">AI Provider Configuration</h3>
-              <p className="text-text-secondary text-sm">Hot-swap the active Language Model without restarting the server.</p>
+              <p className="text-text-secondary text-sm">Configuration is managed via server environment variables (.env file).</p>
             </div>
 
-            <form onSubmit={handleSaveSettings} className="space-y-6 max-w-2xl">
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Active Provider</label>
-                <select 
-                  value={provider}
-                  onChange={(e) => setProvider(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-text-secondary/20 bg-bg-default text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-                >
-                  <option value="gemini">Google Gemini (Default)</option>
-                  <option value="ollama">Local Ollama (Offline Fallback)</option>
-                  <option value="nvidia">NVIDIA NIMs (High Performance)</option>
-                  <option value="custom">Custom OpenAI-Compatible</option>
-                </select>
+            <div className="space-y-5 max-w-2xl">
+              <div className="flex items-center justify-between p-4 bg-bg-default rounded-xl border border-text-secondary/10">
+                <div>
+                  <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">Active Provider</p>
+                  <p className="text-lg font-bold text-text-primary capitalize mt-1">{provider}</p>
+                </div>
+                <div className={`w-3 h-3 rounded-full ${apiKey ? "bg-green-500 shadow-green-500/50 shadow-md" : "bg-red-500 shadow-red-500/50 shadow-md"}`} title={apiKey ? "API Key Configured" : "No API Key"} />
               </div>
 
-              {(provider === "custom" || provider === "ollama" || provider === "nvidia") && (
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Base URL</label>
-                    <input 
-                      type="url" 
-                      value={baseUrl}
-                      onChange={(e) => setBaseUrl(e.target.value)}
-                      placeholder={provider === "ollama" ? "http://127.0.0.1:11434/v1" : "https://api.custom-provider.com/v1"}
-                      className="w-full px-4 py-3 rounded-xl border border-text-secondary/20 bg-bg-default text-text-primary"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-text-primary mb-2">Model Name</label>
-                      <input 
-                        type="text" 
-                        value={modelName}
-                        onChange={(e) => setModelName(e.target.value)}
-                        placeholder="e.g., llama3-70b"
-                        className="w-full px-4 py-3 rounded-xl border border-text-secondary/20 bg-bg-default text-text-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-text-primary mb-2">API Key</label>
-                      <input 
-                        type="password" 
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        placeholder="sk-..."
-                        className="w-full px-4 py-3 rounded-xl border border-text-secondary/20 bg-bg-default text-text-primary"
-                      />
-                    </div>
-                  </div>
+              {baseUrl && (
+                <div className="p-4 bg-bg-default rounded-xl border border-text-secondary/10">
+                  <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">Base URL</p>
+                  <p className="text-sm font-mono text-text-primary mt-1 break-all">{baseUrl}</p>
                 </div>
               )}
 
-              <div className="pt-4 flex justify-end">
-                <button 
-                  type="submit" 
-                  disabled={isSaving}
-                  className="bg-brand-primary text-white px-8 py-3 rounded-xl font-bold shadow-orange-500/20 shadow-lg hover:shadow-orange-500/40 transition-all disabled:opacity-50"
-                >
-                  {isSaving ? "Saving..." : "Save Settings & Hot-Swap"}
-                </button>
+              {modelName && (
+                <div className="p-4 bg-bg-default rounded-xl border border-text-secondary/10">
+                  <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">Model</p>
+                  <p className="text-sm font-mono text-text-primary mt-1">{modelName}</p>
+                </div>
+              )}
+
+              <div className="p-4 bg-bg-default rounded-xl border border-text-secondary/10">
+                <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">API Key</p>
+                <p className={`text-sm font-bold mt-1 ${apiKey ? "text-green-600" : "text-red-500"}`}>
+                  {apiKey ? "✓ Configured (from server environment)" : "✗ Not configured — add to .env file"}
+                </p>
               </div>
-            </form>
+
+              <p className="text-xs text-text-secondary/60 italic pt-2">
+                To change these settings, update the environment variables on the server and restart.
+              </p>
+            </div>
           </motion.div>
         )}
 
@@ -327,13 +287,13 @@ export default function AdminPanel() {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => { setRecipeToEdit(recipe); setIsRecipeModalOpen(true); }}
+                            <Link
+                              href={`/recipe/${recipe.recipe_id}/edit`}
                               className="p-2 text-text-secondary hover:text-brand-primary transition-colors"
                               title="Edit"
                             >
                               <FiEdit2 />
-                            </button>
+                            </Link>
                             <button
                               onClick={() => handleDeleteRecipe(recipe.recipe_id)}
                               className="p-2 text-text-secondary hover:text-red-500 transition-colors"
@@ -423,19 +383,6 @@ export default function AdminPanel() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <CreateRecipeModal 
-        isOpen={isRecipeModalOpen}
-        onClose={() => {
-          setIsRecipeModalOpen(false);
-          setRecipeToEdit(null);
-        }}
-        recipeToEdit={recipeToEdit}
-        onSuccess={() => {
-          setRecipesPage(1);
-          fetchRecipes(1);
-        }}
-      />
     </div>
   );
 }

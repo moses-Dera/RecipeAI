@@ -10,10 +10,10 @@ export default async function ExplorePage() {
   const { recipes } = await recipeService.getAllRecipes();
 
   return (
-    <main className="min-h-screen bg-bg-primary pt-32 pb-20">
+    <div className="min-h-screen bg-bg-primary pt-8 pb-12">
       <div className="container mx-auto px-6 md:px-12">
         <ExploreGallery initialRecipes={recipes} />
       </div>
-    </main>
+    </div>
   );
 }

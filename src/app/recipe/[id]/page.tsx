@@ -4,12 +4,13 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
-    const id = parseInt(params.id);
+    const { id: paramId } = await params;
+    const id = parseInt(paramId);
     if (isNaN(id)) return { title: "Recipe Not Found" };
     const recipe = await recipeService.getRecipeById(id);
     return {
@@ -21,13 +22,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function RecipeDetailPage({ params }: PageProps) {
-  const id = parseInt(params.id);
+export default async function RecipePage({ params }: PageProps) {
+  const { id: paramId } = await params;
+  const id = parseInt(paramId);
   if (isNaN(id)) notFound();
 
   let recipe;
   try {
     recipe = await recipeService.getRecipeById(id);
+    // Track page view
+    await recipeService.incrementViewCount(id);
   } catch {
     notFound();
   }

@@ -7,6 +7,7 @@ export const CreateRecipeSchema = z.object({
   nutrition: z.string().optional(), // JSON array of benefit strings
   region: z.string().max(100).optional(),
   image_url: z.string().optional(),
+  gallery: z.array(z.string()).optional(),
   prep_time_min: z.number().int().positive().optional(),
   difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
   meal_type: z.array(z.string()).min(1, "At least one meal type is required"),

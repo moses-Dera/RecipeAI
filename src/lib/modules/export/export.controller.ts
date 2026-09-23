@@ -10,7 +10,7 @@ export class ExportController {
       const recipeId = parseInt((await params).id);
       if (isNaN(recipeId)) return NextResponse.json({ error: "Invalid recipe ID" }, { status: 400 });
       const buffer = await exportService.generateDocx(recipeId, parseInt(user.id as string));
-      return new NextResponse(buffer, {
+      return new NextResponse(buffer as any, {
         headers: {
           "Content-Disposition": `attachment; filename="recipe-${recipeId}.docx"`,
           "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
