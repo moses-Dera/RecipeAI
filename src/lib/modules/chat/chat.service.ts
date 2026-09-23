@@ -13,7 +13,7 @@ const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant.
 Your goal is to help the user with recipes, cooking techniques, and meal planning.
 
 1. You have a built-in search tool to find recipes in the user's RecipeAI catalogue. Use it when the user asks for specific recipes or ingredients they might have saved.
-2. You ALSO have extensive general knowledge about world cuisines, nutrition, and cooking. You are fully allowed to provide recipes, tips, and food knowledge from your own training data if the user asks a general question or if a recipe is not found in the database.
+2. You ALSO have extensive general knowledge about world cuisines, nutrition, and cooking. You are fully allowed to provide recipes, tips, and food knowledge from your own training data if the user asks a general question, or if a recipe is not found in the database. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
 3. Be friendly, concise, and helpful. Always format your recipes beautifully.
 If a user asks for a recipe, provide a clear list of ingredients and step-by-step instructions.`;
 
@@ -36,7 +36,7 @@ const exportRecipeTool = tool(
 let embeddingModel: FlagEmbedding | null = null;
 const getEmbeddingModel = async () => {
   if (!embeddingModel) {
-    embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGEBaseEN });
+    embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGESmallEN });
   }
   return embeddingModel;
 };
@@ -64,7 +64,7 @@ const searchRecipesTool = tool(
       `;
 
       if (!matches || matches.length === 0) {
-        return `No semantically related recipes found for "${query}".`;
+        return `No semantically related recipes found for "${query}" in the catalogue. Please answer the user's request using your extensive general culinary knowledge instead.`;
       }
       
       return `Found related recipes:\n` + matches.map((r: any) => 
@@ -72,7 +72,7 @@ const searchRecipesTool = tool(
       ).join("\n");
     } catch (e) {
       console.error("Semantic search failed:", e);
-      return `Search failed. Please fall back to generic catalogue recommendations.`;
+      return `Search failed. Please answer the user's request using your extensive general culinary knowledge instead.`;
     }
   },
   {
@@ -134,7 +134,7 @@ export class ChatService {
         try {
           let currentRecipe = await recipeRepository.findByIdVisible(recipeId, userId || undefined);
           if (currentRecipe) {
-            systemPromptWithRAG += `\n\n[PAGE CONTEXT]: The user is currently viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). If they ask questions about "this recipe", refer to this context. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
+            systemPromptWithRAG += `\n\n[PAGE CONTEXT]: The user is currently viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). This is EXTREMELY IMPORTANT: If they ask questions about "this recipe", "it", or refer to the current context, you MUST refer to this recipe. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
           }
         } catch (e) {
           // Ignore if not found

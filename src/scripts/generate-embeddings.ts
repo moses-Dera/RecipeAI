@@ -4,7 +4,7 @@ import { prisma } from '../lib/db/prisma';
 
 async function main() {
   console.log("Initializing local embedding model (fastembed)...");
-  const embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGEBaseEN });
+  const embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGESmallEN });
   console.log("Fetching recipes without embeddings...");
   
   // Find all recipes that don't have embeddings yet
