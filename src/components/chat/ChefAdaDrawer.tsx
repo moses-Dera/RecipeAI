@@ -74,10 +74,15 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
     }
   }, [messages, isTyping]);
 
-  // Prevent body scrolling when drawer is open
+  // Prevent body scrolling and snap to bottom when drawer is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      // Reset scroll tracking and snap to bottom when opening the drawer
+      isScrolledUp.current = false;
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+      }, 100);
     } else {
       document.body.style.overflow = "unset";
     }
