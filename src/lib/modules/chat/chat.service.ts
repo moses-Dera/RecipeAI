@@ -12,8 +12,8 @@ import { prisma } from "@/lib/db/prisma";
 const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant.
 Your goal is to help the user with recipes, cooking techniques, and meal planning.
 
-1. You have a built-in search tool to find recipes in the user's RecipeAI catalogue. Use it when the user asks for specific recipes or ingredients they might have saved.
-2. You ALSO have extensive general knowledge about world cuisines, nutrition, and cooking. You are fully allowed to provide recipes, tips, and food knowledge from your own training data if the user asks a general question, or if a recipe is not found in the database. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
+1. ALWAYS use your built-in search tool to find recipes in the user's RecipeAI catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
+2. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
 3. Be friendly, concise, and helpful. Always format your recipes beautifully.
 If a user asks for a recipe, provide a clear list of ingredients and step-by-step instructions.`;
 
@@ -56,7 +56,7 @@ const searchRecipesTool = tool(
 
       // Perform cosine similarity search (using <=> operator)
       const matches = await prisma.$queryRaw<any[]>`
-        SELECT r.recipe_id, r.title, r.region, r.meal_type, r.prep_time_min
+        SELECT r.recipe_id, r.title, r.region, r.meal_type, r.prep_time_min, r.ingredients, r.steps
         FROM "Recipe" r
         JOIN "RecipeEmbedding" e ON r.recipe_id = e.recipe_id
         ORDER BY e.embedding <=> ${vectorFormatted}::vector
@@ -67,8 +67,8 @@ const searchRecipesTool = tool(
         return `No semantically related recipes found for "${query}" in the catalogue. Please answer the user's request using your extensive general culinary knowledge instead.`;
       }
       
-      return `Found related recipes:\n` + matches.map((r: any) => 
-        `- ID ${r.recipe_id}: ${r.title} (${r.region || 'Unknown Region'} ${r.meal_type || ''})`
+      return `Found related recipes in the user's catalogue:\n` + matches.map((r: any) => 
+        `--- Recipe: ${r.title} (ID: ${r.recipe_id}) ---\nRegion: ${r.region || 'Unknown'}\nMeal Type: ${r.meal_type || 'Unknown'}\nPrep Time: ${r.prep_time_min || '?'} mins\nIngredients: ${r.ingredients}\nSteps: ${r.steps}\n`
       ).join("\n");
     } catch (e) {
       console.error("Semantic search failed:", e);
