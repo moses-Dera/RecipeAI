@@ -9,13 +9,13 @@ import { z } from "zod";
 import { EmbeddingModel, FlagEmbedding } from "fastembed";
 import { prisma } from "@/lib/db/prisma";
 
-const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant.
+const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant built into the RecipeAI app.
 Your goal is to help the user with recipes, cooking techniques, and meal planning.
 
 1. ALWAYS use your built-in search tool to find recipes in the user's RecipeAI catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
 2. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
-3. Be friendly, concise, and helpful. Always format your recipes beautifully.
-If a user asks for a recipe, provide a clear list of ingredients and step-by-step instructions.`;
+3. You have full spatial awareness of the app. If a [PAGE CONTEXT] is provided below, it tells you exactly what page or URL the user is currently viewing. You are fully authorized and encouraged to tell the user what page they are on if they ask!
+4. Be friendly, concise, and helpful. Always format your recipes beautifully.`;
 
 const exportRecipeTool = tool(
   async ({ recipeId }: { recipeId: number }) => {
@@ -36,7 +36,10 @@ const exportRecipeTool = tool(
 let embeddingModel: FlagEmbedding | null = null;
 const getEmbeddingModel = async () => {
   if (!embeddingModel) {
-    embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGESmallEN });
+    embeddingModel = await FlagEmbedding.init({ 
+      model: EmbeddingModel.BGESmallEN,
+      cacheDir: "/tmp"
+    });
   }
   return embeddingModel;
 };

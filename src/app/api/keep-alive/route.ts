@@ -8,7 +8,10 @@ export async function GET() {
   try {
     if (!embeddingModel) {
       console.log("Warming up AI Model...");
-      embeddingModel = await FlagEmbedding.init({ model: EmbeddingModel.BGESmallEN });
+      embeddingModel = await FlagEmbedding.init({ 
+        model: EmbeddingModel.BGESmallEN,
+        cacheDir: "/tmp"
+      });
     }
     return NextResponse.json({ status: "warm", message: "AI Model is loaded and ready!" });
   } catch (error) {
