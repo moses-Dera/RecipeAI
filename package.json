@@ -22,7 +22,7 @@
     "@upstash/redis": "^1.39.0",
     "bcryptjs": "^2.4.3",
     "docx": "^9.7.1",
-    "dotenv": "^18.0.1",
+    "dotenv": "^16.6.1",
     "fastembed": "^2.1.0",
     "framer-motion": "^11.5.0",
     "lru-cache": "^11.5.3",
