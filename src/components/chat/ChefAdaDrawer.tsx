@@ -57,9 +57,21 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
     initializeChat();
   }, [session?.user]);
 
-  // Auto-scroll to bottom
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isScrolledUp = useRef(false);
+
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    // If the user has scrolled up more than 100px from the bottom, mark as scrolled up
+    isScrolledUp.current = scrollHeight - scrollTop - clientHeight > 100;
+  };
+
+  // Auto-scroll to bottom only if not manually scrolled up
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!isScrolledUp.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
   }, [messages, isTyping]);
 
   // Prevent body scrolling when drawer is open
@@ -208,7 +220,11 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-bg-surface custom-scrollbar">
+            <div 
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto p-4 space-y-4 bg-bg-surface custom-scrollbar"
+            >
               {messages.map((msg, idx) => (
                 <div 
                   key={idx} 
