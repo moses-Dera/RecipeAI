@@ -128,17 +128,24 @@ export class ChatService {
 
     // Page Content Awareness
     if (validated.context?.currentPath) {
-      const match = validated.context.currentPath.match(/\/recipe\/(\d+)/);
+      const path = validated.context.currentPath;
+      systemPromptWithRAG += `\n\n[PAGE CONTEXT]: The user is currently on the path: "${path}". `;
+      
+      const match = path.match(/\/recipe\/(\d+)/);
       if (match) {
         const recipeId = parseInt(match[1]);
         try {
           let currentRecipe = await recipeRepository.findByIdVisible(recipeId, userId || undefined);
           if (currentRecipe) {
-            systemPromptWithRAG += `\n\n[PAGE CONTEXT]: The user is currently viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). This is EXTREMELY IMPORTANT: If they ask questions about "this recipe", "it", or refer to the current context, you MUST refer to this recipe. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
+            systemPromptWithRAG += `Specifically, they are viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). This is EXTREMELY IMPORTANT: If they ask questions about "this recipe", "it", or refer to the current context, you MUST refer to this recipe. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
           }
         } catch (e) {
           // Ignore if not found
         }
+      } else if (path.includes("/explore")) {
+        systemPromptWithRAG += `They are browsing the Explore page looking for recipes.`;
+      } else if (path.includes("/dashboard")) {
+        systemPromptWithRAG += `They are on their private Dashboard viewing their saved recipes.`;
       }
     }
 
