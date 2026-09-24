@@ -77,9 +77,9 @@ const searchRecipesTool = tool(
   },
   {
     name: "search_recipes",
-    description: "Performs an AI semantic search for recipes in the database based on ingredients, feelings, flavor profiles, or regions. Use this whenever the user asks for recommendations.",
+    description: "Search the user's RecipeAI catalogue for recipes. ALWAYS use this tool ANYTIME the user asks about their saved recipes, what to cook, or what recipes they have. If they don't specify an ingredient, use a generic query like 'delicious meals' or 'dinner'.",
     schema: z.object({
-      query: z.string().describe("The semantic search query")
+      query: z.string().describe("The semantic search query (e.g., 'chicken', 'dinner', 'Italian', or 'delicious meals')")
     })
   }
 );
