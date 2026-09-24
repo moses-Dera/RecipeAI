@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍳 RecipeAI
 
-## Getting Started
+RecipeAI is your intelligent, all-in-one culinary companion. Built on a modern Next.js 16 stack, it allows you to store your favorite recipes, explore new world cuisines, and chat with **Chef Ada**—a highly contextual AI culinary assistant that knows exactly what you have in your kitchen.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Personal Recipe Catalogue:** Create, edit, and organize your favorite recipes with rich images hosted on S3.
+- **Chef Ada (AI Assistant):** Powered by Nvidia LLMs and LangChain, Chef Ada acts as your personal sous-chef. She can answer culinary questions and help with meal planning.
+- **Contextual RAG Search:** Chef Ada uses advanced semantic vector search (`pgvector` + `FastEmbed`) to search your private recipe catalogue before giving advice. She even knows exactly which recipe page you are currently viewing!
+- **Lightning Fast Exploration:** The Explore page is backed by Upstash Redis, ensuring millisecond load times for discovering new recipes.
+- **Word Document Exports:** Instantly export any recipe into a beautifully formatted `.docx` file for offline use or printing.
+- **Secure Authentication:** Seamless login via Google OAuth 2.0 or Email/Password credentials.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Frontend:** Next.js 16 (App Router), React 19, Tailwind CSS v4, Framer Motion
+- **Backend:** Next.js API Routes, Prisma ORM
+- **Database:** PostgreSQL with `pgvector`
+- **Caching:** Redis (via Upstash)
+- **AI & NLP:** NVIDIA Nemotron-3.5 API, LangChain, FastEmbed (BGE-Small-EN), ONNX Runtime
+- **Storage:** AWS S3 Compatible Object Storage
+- **Auth:** NextAuth.js (v4)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
+- Node.js v20+
+- A PostgreSQL Database with the `vector` extension installed
+- Redis instance (Upstash recommended)
+- NVIDIA API Key (for LLM)
+- Google Cloud Console OAuth Credentials
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/RecipeAI.git
+   cd RecipeAI
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables:**
+   Create a `.env` file in the root directory and configure your keys (see `.env.example` if available, or reference the Product Manual for required keys like `DATABASE_URL`, `NVIDIA_API_KEY`, etc.).
+
+4. **Initialize the Database:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+   *(Note: Ensure you have manually executed `CREATE EXTENSION IF NOT EXISTS vector;` on your Postgres database first).*
+
+5. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:3000`.
+
+---
+
+## 📚 Documentation
+
+For an in-depth breakdown of the architecture, AI semantic search flows, and Vercel deployment strategies (including Serverless function workarounds for AI models), please read the **[PRODUCT_MANUAL.md](./PRODUCT_MANUAL.md)**.
