@@ -24,7 +24,7 @@ export default function LandingHero() {
   const leftCardX = useTransform(smoothProgress, [0, 1], [0, -150]);
   const leftCardRotate = useTransform(smoothProgress, [0, 1], [0, -25]);
   const leftCardY = useTransform(smoothProgress, [0, 1], [0, 50]);
-  
+
   const rightCardX = useTransform(smoothProgress, [0, 1], [0, 150]);
   const rightCardRotate = useTransform(smoothProgress, [0, 1], [0, 25]);
   const rightCardY = useTransform(smoothProgress, [0, 1], [0, 50]);
@@ -35,49 +35,59 @@ export default function LandingHero() {
   const centerCardScale = useTransform(smoothProgress, [0, 1], [1, 0.9]);
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-[600px] rounded-3xl overflow-hidden bg-bg-surface shadow-lg flex items-center justify-between px-8 py-16 md:px-16 border border-text-secondary/10">
-      
-      {/* Background Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-r from-bg-surface via-bg-surface/90 to-transparent z-10" />
-      {/* Softened Glow */}
-      <div className="absolute top-0 right-0 w-2/3 h-full bg-brand-primary/5 blur-[100px]" />
+    <section ref={containerRef} className="relative w-full min-h-[450px] lg:min-h-[600px] rounded-3xl overflow-hidden bg-bg-surface shadow-sm lg:shadow-lg flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-8 px-6 py-10 md:py-16 md:px-16 border border-text-secondary/10">
 
-      {/* Text Content */}
-      <div className="relative z-20 flex flex-col items-start h-full justify-center max-w-xl">
-        <motion.h1 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          className="font-heading text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-text-primary drop-shadow-sm mb-6 leading-tight"
-        >
-          Discover the Soul of <br />
-          <span className="text-brand-primary">Nigerian Cooking</span>
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-          className="text-base md:text-lg text-text-secondary font-sans mb-8 leading-relaxed"
-        >
-          Let Chef Ada guide you through generations of flavor. Save, share, and master traditional dishes like never before.
-        </motion.p>
-        
-        <Link href="/explore">
-          <motion.button 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-brand-primary text-white px-8 py-4 rounded-full font-bold text-lg"
-          >
-            Explore Recipes
-          </motion.button>
-        </Link>
+      {/* Background Gradients (Desktop) */}
+      <div className="absolute inset-0 bg-gradient-to-r from-bg-surface via-bg-surface/90 to-transparent z-10 hidden lg:block" />
+      
+      {/* Mobile Background Image */}
+      <div className="absolute inset-0 z-0 lg:hidden">
+        <Image src="/images/partyjollof.jpeg" alt="Background" fill className="object-cover opacity-100" />
+        <div className="absolute inset-0 bg-black/60 z-10" />
       </div>
 
-      {/* Creative Stacked Images with Scroll Animation */}
+      {/* Softened Glow */}
+      <div className="absolute top-0 right-0 w-2/3 h-full bg-brand-primary/5 blur-[100px] z-10" />
+
+      {/* Text Content */}
+      <div className="relative z-20 flex flex-col items-center lg:items-start text-center lg:text-left h-full justify-center max-w-xl w-full">
+        <div className="flex flex-col items-center lg:items-start p-4 lg:p-0 w-full">
+          <motion.h1
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            className="font-heading text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white lg:text-text-primary mb-4 lg:mb-6 leading-tight"
+          >
+            Discover the Soul of <br className="hidden md:block" />
+            <span className="text-brand-primary">Nigerian Cooking</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+            className="text-base md:text-lg text-white/90 lg:text-text-secondary font-sans mb-8 lg:mb-8 leading-relaxed max-w-lg"
+          >
+            Let Chef Ada guide you through generations of flavor. Save, share, and master traditional dishes like never before.
+          </motion.p>
+
+          <Link href="/explore">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-brand-primary text-white px-8 py-4 rounded-full font-bold text-lg"
+            >
+              Explore Recipes
+            </motion.button>
+          </Link>
+        </div>
+      </div>
+
+
+      {/* Creative Stacked Images with Scroll Animation (Desktop) */}
       <div className="hidden lg:block relative z-10 w-[500px] h-[400px]">
         {/* Back Card (Left) */}
         <motion.div

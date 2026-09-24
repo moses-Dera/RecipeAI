@@ -15,7 +15,7 @@ export default function TrendingGrid({ initialRecipes }: { initialRecipes: Recip
   }
 
   return (
-    <section className="w-full py-12 md:py-24 relative">
+    <section className="w-full py-8 md:py-12 relative">
       <div className="flex justify-between items-end mb-12 lg:mb-20">
         <div>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-text-primary tracking-tight">

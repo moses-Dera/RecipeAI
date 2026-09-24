@@ -1,5 +1,7 @@
 import LandingHero from "@/components/landing/LandingHero";
 import TrendingGrid from "@/components/landing/TrendingGrid";
+import AiFeatureHighlight from "@/components/landing/AiFeatureHighlight";
+import FinalCta from "@/components/landing/FinalCta";
 import { recipeService } from "@/lib/modules/recipe/recipe.service";
 
 export const dynamic = 'force-dynamic';
@@ -15,9 +17,11 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col gap-16 pb-20">
+    <div className="flex flex-col gap-4 md:gap-8 pb-20 px-4 md:px-0">
       <LandingHero />
       <TrendingGrid initialRecipes={recipes} />
+      <AiFeatureHighlight />
+      <FinalCta />
     </div>
   );
 }
