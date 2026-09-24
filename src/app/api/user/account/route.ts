@@ -10,7 +10,7 @@ export async function DELETE(req: Request) {
     }
     const userId = parseInt(user.id);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // 1. Delete private recipes
       await tx.recipe.deleteMany({
         where: { owner_id: userId, is_private: true },

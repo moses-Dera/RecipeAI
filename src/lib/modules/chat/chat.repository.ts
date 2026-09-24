@@ -32,7 +32,7 @@ export class ChatRepository {
     // 3. Save to DB asynchronously (fire and forget) to prevent blocking the stream if connection drops
     prisma.chatHistory.create({
       data,
-    }).catch(e => console.error("Async DB save failed for chat history:", e));
+    }).catch((e: any) => console.error("Async DB save failed for chat history:", e));
 
     return tempRecord;
   }

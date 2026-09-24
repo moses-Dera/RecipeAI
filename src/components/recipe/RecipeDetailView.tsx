@@ -169,7 +169,7 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
             Recipe Gallery
           </h2>
           <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar">
-            {recipe.gallery.map((url, idx) => (
+            {recipe.gallery.map((url: string, idx: number) => (
               <div key={idx} className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shrink-0 border border-text-secondary/10 shadow-sm hover:shadow-md transition-shadow">
                 <Image src={url} alt={`${recipe.title} gallery image ${idx + 1}`} fill className="object-cover" />
               </div>

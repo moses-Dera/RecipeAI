@@ -31,7 +31,7 @@ export class AdminRepository {
     });
     const result: Record<string, string> = {};
     for (const key of keys) {
-      const found = settings.find((s) => s.key === key);
+      const found = settings.find((s: any) => s.key === key);
       if (found) {
         result[key] = found.value;
       }
