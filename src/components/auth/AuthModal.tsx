@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -144,6 +145,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             className="w-full bg-transparent border border-text-secondary/20 rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
             required
           />
+          {isLogin && (
+            <div className="flex justify-end mt-2">
+              <Link
+                href="/forgot-password"
+                onClick={onClose}
+                className="text-xs font-bold text-brand-primary hover:underline transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+          )}
         </div>
 
         <AnimatePresence>
