@@ -58,6 +58,26 @@ export class RecipeRepository {
   }
 
   /**
+   * Search visible recipes by title or ingredients
+   */
+  async searchRecipes(query: string, userId?: number, limit = 5) {
+    const where = {
+      ...recipeVisibilityFilter(userId),
+      OR: [
+        { title: { contains: query, mode: 'insensitive' as const } },
+        { ingredients: { contains: query, mode: 'insensitive' as const } }
+      ]
+    };
+
+    return prisma.recipe.findMany({
+      where,
+      orderBy: { view_count: "desc" },
+      select: { recipe_id: true, title: true, image_url: true, difficulty: true, prep_time_min: true },
+      take: limit,
+    });
+  }
+
+  /**
    * Find most viewed recipes
    */
   async findTrending(limit = 12) {

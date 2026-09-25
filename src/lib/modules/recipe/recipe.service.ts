@@ -14,6 +14,11 @@ export class RecipeService {
     return recipeRepository.findTrending(limit);
   }
 
+  async searchRecipes(query: string, userId?: number, limit = 5) {
+    if (!query || query.trim() === "") return [];
+    return recipeRepository.searchRecipes(query.trim(), userId, limit);
+  }
+
   async incrementViewCount(id: number) {
     try {
       await recipeRepository.incrementViewCount(id);
