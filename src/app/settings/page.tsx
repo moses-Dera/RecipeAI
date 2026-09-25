@@ -20,6 +20,7 @@ export default function SettingsPage() {
   // Initialize username when session loads
   useEffect(() => {
     if (session?.user?.name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUsername(session.user.name);
     }
   }, [session]);

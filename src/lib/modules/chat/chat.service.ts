@@ -13,7 +13,8 @@ const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant 
 Your goal is to help the user with recipes, cooking techniques, and meal planning.
 
 1. ALWAYS use your built-in search tool to find recipes in the user's RecipeAI catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
-2. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
+2. Even if the user asks for your personal opinion (e.g. "what is your favorite food?"), search their database first to see if you can pick one of THEIR saved recipes as your favorite!
+3. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
 3. You have full spatial awareness of the app. If a [PAGE CONTEXT] is provided below, it tells you exactly what page or URL the user is currently viewing. You are fully authorized and encouraged to tell the user what page they are on if they ask!
 4. Be friendly, concise, and helpful. Always format your recipes beautifully.`;
 
@@ -111,7 +112,7 @@ export class ChatService {
       console.warn("History fetch skipped due to error:", e);
     }
 
-    let history: { role: string; message: string }[] = historyRecords.map((msg: any) => ({
+    const history: { role: string; message: string }[] = historyRecords.map((msg: any) => ({
       role: msg.role,
       message: msg.message
     }));
@@ -138,7 +139,7 @@ export class ChatService {
       if (match) {
         const recipeId = parseInt(match[1]);
         try {
-          let currentRecipe = await recipeRepository.findByIdVisible(recipeId, userId || undefined);
+          const currentRecipe = await recipeRepository.findByIdVisible(recipeId, userId || undefined);
           if (currentRecipe) {
             systemPromptWithRAG += `Specifically, they are viewing the recipe "${currentRecipe.title}" (ID: ${currentRecipe.recipe_id}). This is EXTREMELY IMPORTANT: If they ask questions about "this recipe", "it", or refer to the current context, you MUST refer to this recipe. Ingredients: ${currentRecipe.ingredients}. Steps: ${currentRecipe.steps}.`;
           }

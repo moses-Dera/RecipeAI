@@ -44,7 +44,7 @@ export default function AiFeatureHighlight() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg text-text-secondary font-sans leading-relaxed mb-8 max-w-lg"
           >
-            Think of her as your personal Nigerian grandmother in the kitchen. Whether you need a substitute for iru, want to know how to get that authentic "smoky" jollof flavor, or have a dietary restriction, Chef Ada has the answer.
+            Think of her as your personal Nigerian grandmother in the kitchen. Whether you need a substitute for iru, want to know how to get that authentic &quot;smoky&quot; jollof flavor, or have a dietary restriction, Chef Ada has the answer.
           </motion.p>
 
           <motion.div
@@ -86,7 +86,7 @@ export default function AiFeatureHighlight() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="self-end bg-brand-primary/10 text-text-primary p-4 rounded-2xl rounded-tr-sm max-w-[85%]"
               >
-                <p className="text-sm font-medium">How do I make my Jollof rice smoky if I don't have firewood?</p>
+                <p className="text-sm font-medium">How do I make my Jollof rice smoky if I don&apos;t have firewood?</p>
               </motion.div>
 
               <motion.div 
@@ -97,7 +97,7 @@ export default function AiFeatureHighlight() {
                 className="self-start bg-brand-primary text-white p-4 rounded-2xl rounded-tl-sm max-w-[90%] shadow-lg shadow-brand-primary/20"
               >
                 <p className="text-sm font-medium leading-relaxed">
-                  Ah! The secret to that authentic party jollof smoke is letting the bottom burn just a little bit—we call it the "bottom pot". 
+                  Ah! The secret to that authentic party jollof smoke is letting the bottom burn just a little bit—we call it the &quot;bottom pot&quot;. 
                   <br/><br/>
                   You can also roast your tatashe and tomatoes in the oven before blending!
                 </p>

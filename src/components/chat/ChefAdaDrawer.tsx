@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { ChatMessage } from './ChatMessage';
 
 interface ChefAdaDrawerProps {
   isOpen: boolean;
@@ -231,26 +232,7 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
               className="flex-1 overflow-y-auto p-4 space-y-4 bg-bg-surface custom-scrollbar"
             >
               {messages.map((msg, idx) => (
-                <div 
-                  key={idx} 
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div 
-                    className={`max-w-[85%] rounded-2xl p-3 shadow-sm ${
-                      msg.role === "user" 
-                        ? "bg-brand-primary text-white rounded-br-none" 
-                        : "bg-bg-primary text-text-primary border border-text-secondary/10 rounded-bl-none prose prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5 prose-strong:text-text-primary prose-a:text-brand-primary break-words max-w-full"
-                    }`}
-                  >
-                    {msg.role === "user" ? (
-                      <p className="text-sm leading-relaxed">{msg.content}</p>
-                    ) : (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {msg.content}
-                      </ReactMarkdown>
-                    )}
-                  </div>
-                </div>
+                <ChatMessage key={idx} msg={msg} />
               ))}
               
               {isTyping && (
