@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
+import { mailService } from "@/lib/modules/mail/mail.service";
 import { RegisterDTO, RegisterSchema } from "./auth.schema";
 import { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -31,6 +32,11 @@ export class AuthService {
         username: true,
         email: true,
       },
+    });
+
+    // Send welcome email asynchronously (don't block the response)
+    mailService.sendWelcomeEmail(user.email, user.username).catch((err) => {
+      console.error("Failed to send welcome email:", err);
     });
 
     return user;

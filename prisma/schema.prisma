@@ -14,8 +14,10 @@ model User {
   email       String        @unique
   password    String?
   role        UserRole      @default(user)
-  created_at  DateTime      @default(now())
-  profile_img String?
+  created_at          DateTime      @default(now())
+  profile_img         String?
+  reset_token         String?
+  reset_token_expires DateTime?
   accounts    Account[]
   chats       ChatHistory[]
   recipes     Recipe[]
