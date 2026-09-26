@@ -40,7 +40,6 @@ export class RecipeController {
     try {
       const user = await getCurrentUser();
       if (!user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      if (user.role !== "admin") return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
       const body = await req.json();
       const recipe = await recipeService.createRecipe(body, parseInt(user.id));
       return NextResponse.json({ recipe }, { status: 201 });
