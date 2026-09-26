@@ -10,6 +10,27 @@ import { NavbarSearch } from "./NavbarSearch";
 import ChefAdaDrawer from "@/components/chat/ChefAdaDrawer";
 import { FiUser, FiMessageCircle, FiGrid, FiLogOut, FiSettings, FiShield } from "react-icons/fi";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Suspense } from "react";
+
+function AuthParamListener({ setIsAuthModalOpen, setAuthTab }: { setIsAuthModalOpen: (v: boolean) => void, setAuthTab: (v: "login"|"signup") => void }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const auth = searchParams.get("auth");
+    const callbackUrl = searchParams.get("callbackUrl");
+    if (auth === "login" || auth === "signup" || callbackUrl) {
+      setAuthTab(auth === "signup" ? "signup" : "login");
+      setIsAuthModalOpen(true);
+      // Clean up the URL
+      router.replace(pathname, { scroll: false });
+    }
+  }, [searchParams, router, pathname, setIsAuthModalOpen, setAuthTab]);
+
+  return null;
+}
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -32,6 +53,9 @@ export function Navbar() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <AuthParamListener setIsAuthModalOpen={setIsAuthModalOpen} setAuthTab={setAuthTab} />
+      </Suspense>
       <motion.nav 
         variants={{
           visible: { y: 0, opacity: 1 },

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export default async function CreateRecipePage() {
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/");
+    redirect("/?auth=login");
   }
 
   return <RecipeEditor />;
