@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FiClock, FiMapPin, FiBookmark, FiShare2, FiArrowLeft, FiCheck, FiDownload } from "react-icons/fi";
+import { FiClock, FiMapPin, FiBookmark, FiShare2, FiArrowLeft, FiCheck, FiDownload, FiFolder, FiX, FiHeart } from "react-icons/fi";
 import type { Recipe } from "@prisma/client";
 import { useToast } from "@/components/ui/ToastContext";
 import AuthModal from "@/components/auth/AuthModal";
@@ -21,6 +21,9 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [collections, setCollections] = useState<any[]>([]);
+  const [isLoadingCollections, setIsLoadingCollections] = useState(false);
 
   let ingredients: any[] = [];
   let steps: string[] = [];
@@ -32,23 +35,43 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
     if (recipe.nutrition) nutrition = JSON.parse(recipe.nutrition); 
   } catch {}
 
-  const handleSave = async () => {
+  const handleSaveClick = async () => {
     if (!session?.user) {
       setIsAuthModalOpen(true);
       return;
     }
+    if (isSaved) return;
+
+    setIsLoadingCollections(true);
+    setIsSaveModalOpen(true);
+    try {
+      const res = await fetch("/api/collections");
+      if (res.ok) {
+        const data = await res.json();
+        setCollections(data.collections || []);
+      }
+    } catch {
+      toast.error("Failed to load collections");
+    } finally {
+      setIsLoadingCollections(false);
+    }
+  };
+
+  const confirmSave = async (collectionId?: number) => {
     setIsSaving(true);
     try {
       const res = await fetch("/api/saved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipe_id: recipe.recipe_id }),
+        body: JSON.stringify({ recipe_id: recipe.recipe_id, collection_id: collectionId }),
       });
       if (res.ok) {
         setIsSaved(true);
-        toast.success("Recipe saved to your collection!");
+        setIsSaveModalOpen(false);
+        toast.success("Recipe saved!");
       } else if (res.status === 409) {
         setIsSaved(true);
+        setIsSaveModalOpen(false);
         toast.info("Already in your collection");
       } else {
         toast.error("Failed to save recipe");
@@ -141,7 +164,7 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           {/* Action Buttons */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <button
-              onClick={handleSave}
+              onClick={handleSaveClick}
               disabled={isSaving || isSaved}
               className={`col-span-2 sm:col-span-1 flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
                 isSaved
@@ -253,6 +276,52 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
         onClose={() => setIsAuthModalOpen(false)}
         defaultTab="login"
       />
+
+      {/* Save Modal */}
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-bg-surface w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+            <button 
+              onClick={() => setIsSaveModalOpen(false)}
+              className="absolute right-4 top-4 text-text-secondary hover:text-text-primary bg-bg-default rounded-full p-2"
+            >
+              <FiX size={20} />
+            </button>
+            <h2 className="text-2xl font-bold font-heading mb-6">Save Recipe</h2>
+            
+            {isLoadingCollections ? (
+              <div className="text-center py-8 text-text-secondary">Loading your collections...</div>
+            ) : (
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                <button
+                  onClick={() => confirmSave()}
+                  disabled={isSaving}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-text-secondary/20 hover:border-brand-primary hover:bg-brand-primary/5 transition-all text-left group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-bg-default flex items-center justify-center group-hover:bg-brand-primary/10 group-hover:text-brand-primary transition-colors">
+                    <FiHeart />
+                  </div>
+                  <div className="flex-1 font-bold">General Saved Recipes</div>
+                </button>
+
+                {collections.map(col => (
+                  <button
+                    key={col.id}
+                    onClick={() => confirmSave(col.id)}
+                    disabled={isSaving}
+                    className="w-full flex items-center gap-3 p-4 rounded-xl border border-text-secondary/20 hover:border-brand-primary hover:bg-brand-primary/5 transition-all text-left group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-bg-default flex items-center justify-center group-hover:bg-brand-primary/10 group-hover:text-brand-primary transition-colors">
+                      <FiFolder />
+                    </div>
+                    <div className="flex-1 font-bold">{col.name}</div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

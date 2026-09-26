@@ -195,7 +195,7 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 bottom-0 right-0 md:top-auto md:bottom-4 md:right-4 h-[100dvh] md:h-[600px] w-[90vw] sm:w-[400px] md:w-[380px] bg-bg-surface z-50 shadow-2xl flex flex-col md:rounded-2xl border-l md:border border-text-secondary/10 overflow-hidden"
+            className="fixed top-0 bottom-0 right-0 md:top-auto md:bottom-4 md:right-4 h-[100dvh] md:h-[600px] w-full sm:w-[400px] md:w-[380px] bg-bg-surface z-50 shadow-2xl flex flex-col md:rounded-2xl border-l md:border border-text-secondary/10 overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-text-secondary/10 bg-bg-primary">

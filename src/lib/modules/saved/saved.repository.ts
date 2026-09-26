@@ -9,11 +9,12 @@ export class SavedRepository {
     });
   }
 
-  async saveRecipe(userId: number, recipeId: number, notes?: string) {
+  async saveRecipe(userId: number, recipeId: number, notes?: string, collectionId?: number) {
     return prisma.savedRecipe.create({
       data: {
         user_id: userId,
         recipe_id: recipeId,
+        collection_id: collectionId,
         notes,
       },
     });

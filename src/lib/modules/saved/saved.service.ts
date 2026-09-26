@@ -9,7 +9,7 @@ export class SavedService {
   async saveRecipe(userId: number, data: CreateSavedRecipeDTO) {
     const validated = CreateSavedRecipeSchema.parse(data);
     try {
-      return await savedRepository.saveRecipe(userId, validated.recipe_id, validated.notes);
+      return await savedRepository.saveRecipe(userId, validated.recipe_id, validated.notes, validated.collection_id);
     } catch (error: any) {
       if (error.code === 'P2002') {
         throw new Error("ALREADY_SAVED");

@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FiBookOpen, FiHeart, FiSettings, FiShield } from "react-icons/fi";
+import { FiBookOpen, FiHeart, FiSettings, FiShield, FiClock, FiFolder } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { Suspense } from "react";
@@ -19,6 +19,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const navItems = [
     { id: "recipes", label: "My Recipes", icon: <FiBookOpen /> },
     { id: "saved", label: "Saved Recipes", icon: <FiHeart /> },
+    { id: "collections", label: "Collections", icon: <FiFolder /> },
+    { id: "chats", label: "Chat History", icon: <FiClock /> },
   ];
 
   return (

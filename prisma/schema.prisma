@@ -22,6 +22,7 @@ model User {
   chats       ChatHistory[]
   recipes     Recipe[]
   saved       SavedRecipe[]
+  collections Collection[]
 }
 
 model Account {
@@ -73,15 +74,29 @@ model RecipeEmbedding {
 }
 
 model SavedRecipe {
-  save_id   Int      @id @default(autoincrement())
-  user_id   Int
-  recipe_id Int
-  saved_at  DateTime @default(now())
-  notes     String?
-  recipe    Recipe   @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
-  user      User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  save_id       Int         @id @default(autoincrement())
+  user_id       Int
+  recipe_id     Int
+  collection_id Int?
+  saved_at      DateTime    @default(now())
+  notes         String?
+  recipe        Recipe      @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
+  user          User        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  collection    Collection? @relation(fields: [collection_id], references: [id], onDelete: Cascade)
 
-  @@unique([user_id, recipe_id])
+  @@unique([user_id, recipe_id, collection_id])
+}
+
+model Collection {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  user_id     Int
+  created_at  DateTime      @default(now())
+  user        User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  saved_recipes SavedRecipe[]
+
+  @@unique([user_id, name])
 }
 
 model ChatHistory {

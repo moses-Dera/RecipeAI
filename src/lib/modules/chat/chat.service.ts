@@ -125,6 +125,10 @@ export class ChatService {
     return chatRepository.getHistory(sessionId, userId);
   }
 
+  async getUserSessions(userId: number, limit = 5) {
+    return chatRepository.getUserSessions(userId, limit);
+  }
+
   async processMessageStream(userId: number | undefined, data: ChatMessageDTO) {
     const validated = ChatMessageSchema.parse(data);
 

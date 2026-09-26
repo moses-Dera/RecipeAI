@@ -65,6 +65,38 @@ export class ChatRepository {
 
     return history;
   }
+
+  async getUserSessions(userId: number, limit = 5) {
+    // Get unique sessions for this user, ordered by most recent first
+    // Since Prisma doesn't natively support distinct with orderBy on other fields perfectly without complex groupings,
+    // we can just fetch the most recent messages for the user and group them in JS, or use a raw query.
+    // Let's just fetch the last 50 messages, group by session_id, and take the top `limit`.
+    const recentMessages = await prisma.chatHistory.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+      take: 100,
+      select: { session_id: true, message: true, created_at: true, role: true },
+    });
+
+    const sessionsMap = new Map();
+    for (const msg of recentMessages) {
+      if (!sessionsMap.has(msg.session_id)) {
+        sessionsMap.set(msg.session_id, {
+          session_id: msg.session_id,
+          created_at: msg.created_at,
+          preview: msg.role === 'user' ? msg.message : "Chef Ada recipe suggestion",
+        });
+      } else {
+        // If we find a user message, prefer that for the preview instead of Ada's response
+        const existing = sessionsMap.get(msg.session_id);
+        if (msg.role === 'user' && existing.preview === "Chef Ada recipe suggestion") {
+          existing.preview = msg.message;
+        }
+      }
+    }
+
+    return Array.from(sessionsMap.values()).slice(0, limit);
+  }
 }
 
 export const chatRepository = new ChatRepository();
