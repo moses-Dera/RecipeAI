@@ -36,18 +36,18 @@ export default function FinalCta() {
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             {session ? (
               <Link 
-                href="/dashboard" 
+                href="/recipe/create" 
                 className="bg-bg-surface text-brand-primary px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-xl"
               >
-                Go to Dashboard
+                Share a Recipe
                 <FiArrowRight />
               </Link>
             ) : (
               <Link 
-                href="/explore" 
+                href="/recipe/create" 
                 className="bg-bg-surface text-brand-primary px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-xl"
               >
-                Start Cooking Free
+                Share a Recipe
                 <FiArrowRight />
               </Link>
             )}

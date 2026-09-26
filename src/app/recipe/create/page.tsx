@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export default async function CreateRecipePage() {
   const user = await getCurrentUser();
-  if (user?.role !== "admin") {
+  if (!user) {
     redirect("/");
   }
 
