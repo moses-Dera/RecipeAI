@@ -94,7 +94,7 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
   return (
     <div className="w-full">
       {/* Hero Image Section */}
-      <div className="relative w-full h-[50vh] md:h-[65vh]">
+      <div className="relative w-full min-h-[520px] md:h-[65vh] md:min-h-[600px]">
         <Image
           src={recipe.image_url || "/images/placeholder-1.jpg"}
           alt={recipe.title}
@@ -139,11 +139,11 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           )}
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <button
               onClick={handleSave}
               disabled={isSaving || isSaved}
-              className={`flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
+              className={`col-span-2 sm:col-span-1 flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
                 isSaved
                   ? "bg-green-500 text-white"
                   : "bg-brand-primary hover:bg-brand-primary/90 text-white"
@@ -154,13 +154,13 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
             </button>
             <button
               onClick={handleShare}
-              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
+              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
             >
               <FiShare2 /> Share
             </button>
             <button
               onClick={handleExport}
-              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
+              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
             >
               <FiDownload /> Export
             </button>
