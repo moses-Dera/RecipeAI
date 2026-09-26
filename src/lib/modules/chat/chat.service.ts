@@ -209,15 +209,25 @@ export class ChatService {
              isToolCall = false;
              fullResponseText = "";
              finalToolCalls = [];
+             let finalMessage: any = null;
+
              for await (const chunk of stream) {
-                if (chunk.tool_calls && chunk.tool_calls.length > 0) {
-                   isToolCall = true;
-                   finalToolCalls = chunk.tool_calls;
-                } else if (!isToolCall && chunk.content) {
+                if (!finalMessage) {
+                   finalMessage = chunk;
+                } else {
+                   finalMessage = finalMessage.concat(chunk);
+                }
+
+                if (chunk.content) {
                    const textChunk = chunk.content.toString();
                    fullResponseText += textChunk;
                    controller.enqueue(encoder.encode(textChunk));
                 }
+             }
+
+             if (finalMessage?.tool_calls?.length > 0) {
+                isToolCall = true;
+                finalToolCalls = finalMessage.tool_calls;
              }
           };
 
