@@ -3,9 +3,12 @@
 import { motion } from "framer-motion";
 import { FiMessageSquare, FiHeart, FiStar } from "react-icons/fi";
 import Image from "next/image";
-import Link from "next/link";
 
-export default function AiFeatureHighlight() {
+interface AiFeatureHighlightProps {
+  onOpenChat?: () => void;
+}
+
+export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightProps) {
   return (
     <section className="w-full py-10 md:py-16 relative overflow-hidden">
       {/* Background Decor */}
@@ -53,10 +56,13 @@ export default function AiFeatureHighlight() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <Link href="/chat" className="inline-flex flex-row items-center gap-3 bg-bg-surface border-2 border-brand-primary text-brand-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-primary hover:text-white transition-colors group shadow-lg shadow-brand-primary/20">
+            <button 
+              onClick={onOpenChat}
+              className="inline-flex flex-row items-center gap-3 bg-bg-surface border-2 border-brand-primary text-brand-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-primary hover:text-white transition-colors group shadow-lg shadow-brand-primary/20"
+            >
               <FiMessageSquare className="group-hover:scale-110 transition-transform" />
               Chat with Chef Ada
-            </Link>
+            </button>
           </motion.div>
         </div>
 

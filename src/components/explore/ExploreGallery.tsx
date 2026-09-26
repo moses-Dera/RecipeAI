@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiClock, FiMapPin } from "react-icons/fi";
 import Image from "next/image";
@@ -14,7 +15,8 @@ interface ExploreGalleryProps {
 const REGIONS = ["All", "West Africa", "Northern Nigeria", "South East", "South South", "South West"];
 
 export default function ExploreGallery({ initialRecipes }: ExploreGalleryProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
   const [activeRegion, setActiveRegion] = useState("All");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

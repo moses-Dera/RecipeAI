@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Modal } from "@/components/ui/Modal";
@@ -12,16 +12,24 @@ import { FiMail, FiLock, FiUser } from "react-icons/fi";
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultTab?: "login" | "signup";
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [isLogin, setIsLogin] = useState(true);
+export default function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalProps) {
+  const [isLogin, setIsLogin] = useState(defaultTab === "login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+
+  // Sync tab when modal opens with a specific defaultTab
+  useEffect(() => {
+    if (isOpen) {
+      setIsLogin(defaultTab === "login");
+    }
+  }, [isOpen, defaultTab]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -14,6 +14,7 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 export function Navbar() {
   const { data: session } = useSession();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [isAdaDrawerOpen, setIsAdaDrawerOpen] = useState(false);
   
   // Smart Navbar Hide/Show on Scroll
@@ -88,13 +89,13 @@ export function Navbar() {
             ) : (
               <>
                 <button 
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={() => { setAuthTab("login"); setIsAuthModalOpen(true); }}
                   className="text-text-secondary hover:text-brand-primary transition-colors font-medium text-sm hidden sm:block"
                 >
                   Log In
                 </button>
                 <button 
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={() => { setAuthTab("signup"); setIsAuthModalOpen(true); }}
                   className="bg-brand-primary text-white px-4 py-2 rounded-full font-medium text-sm hover:scale-105 active:scale-95 transition-all shadow-orange-500/20 shadow-lg"
                 >
                   Sign Up
@@ -117,7 +118,8 @@ export function Navbar() {
 
       <AuthModal 
         isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultTab={authTab}
       />
 
       <ChefAdaDrawer 

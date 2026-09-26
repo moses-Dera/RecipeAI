@@ -15,8 +15,10 @@ Your goal is to help the user with recipes, cooking techniques, and meal plannin
 1. ALWAYS use your built-in search tool to find recipes in the user's RecipeAI catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
 2. Even if the user asks for your personal opinion (e.g. "what is your favorite food?"), search their database first to see if you can pick one of THEIR saved recipes as your favorite!
 3. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
-3. You have full spatial awareness of the app. If a [PAGE CONTEXT] is provided below, it tells you exactly what page or URL the user is currently viewing. You are fully authorized and encouraged to tell the user what page they are on if they ask!
-4. Be friendly, concise, and helpful. Always format your recipes beautifully.`;
+4. You have full spatial awareness of the app. If a [PAGE CONTEXT] is provided below, it tells you exactly what page or URL the user is currently viewing. You are fully authorized and encouraged to tell the user what page they are on if they ask!
+5. Be friendly, concise, and helpful. Always format your recipes beautifully using markdown.
+6. NEVER expose internal database IDs, raw JSON, HTML tags, or technical metadata to the user. Present recipe information in a clean, human-friendly format. Use recipe names, not IDs. If you need to link to a recipe, use the format [Recipe Name](/recipe/ID) as a clickable link.
+7. When presenting recipe results, format them beautifully with headers, bullet points, and emojis. Do NOT dump raw ingredient lists or step data.`;
 
 const exportRecipeTool = tool(
   async ({ recipeId }: { recipeId: number }) => {
@@ -70,9 +72,33 @@ const searchRecipesTool = tool(
       if (!matches || matches.length === 0) {
         return `No semantically related recipes found for "${query}" in the catalogue. Please answer the user's request using your extensive general culinary knowledge instead.`;
       }
+
+      // Strip HTML tags from recipe data to prevent raw HTML appearing in chat
+      const stripHtml = (str: string) => str.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
+      // Parse JSON ingredient arrays into clean text
+      const formatIngredients = (raw: string) => {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.map((ing: any) => `${ing.name} (${ing.quantity} ${ing.unit || ''})`).join(', ');
+          }
+        } catch {}
+        return stripHtml(raw);
+      };
+
+      const formatSteps = (raw: string) => {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.map((step: string, i: number) => `Step ${i + 1}: ${step}`).join('\n');
+          }
+        } catch {}
+        return stripHtml(raw);
+      };
       
-      return `Found related recipes in the user's catalogue:\n` + matches.map((r: any) => 
-        `--- Recipe: ${r.title} (ID: ${r.recipe_id}) ---\nRegion: ${r.region || 'Unknown'}\nMeal Type: ${r.meal_type || 'Unknown'}\nPrep Time: ${r.prep_time_min || '?'} mins\nIngredients: ${r.ingredients}\nSteps: ${r.steps}\n`
+      return `Found related recipes in the user's catalogue (INTERNAL NOTE: use [Recipe Name](/recipe/ID) format for links, NEVER show raw IDs to user):\n` + matches.map((r: any) => 
+        `--- ${r.title} [internal-link: /recipe/${r.recipe_id}] ---\nRegion: ${r.region || 'Unknown'}\nMeal Type: ${r.meal_type || 'Unknown'}\nPrep Time: ${r.prep_time_min || '?'} mins\nIngredients: ${formatIngredients(r.ingredients)}\nSteps: ${formatSteps(r.steps)}\n`
       ).join("\n");
     } catch (e) {
       console.error("Semantic search failed:", e);

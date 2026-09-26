@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { FiClock, FiMapPin, FiBookmark, FiShare2, FiArrowLeft, FiCheck, FiDownload } from "react-icons/fi";
 import type { Recipe } from "@prisma/client";
 import { useToast } from "@/components/ui/ToastContext";
+import AuthModal from "@/components/auth/AuthModal";
 
 interface RecipeDetailViewProps {
   recipe: Recipe & { owner?: { username: string } | null };
@@ -19,6 +20,7 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
   const toast = useToast();
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   let ingredients: any[] = [];
   let steps: string[] = [];
@@ -32,7 +34,7 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
 
   const handleSave = async () => {
     if (!session?.user) {
-      toast.error("Please sign in to save recipes");
+      setIsAuthModalOpen(true);
       return;
     }
     setIsSaving(true);
@@ -69,6 +71,10 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
   };
 
   const handleExport = async () => {
+    if (!session?.user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
     try {
       const res = await fetch(`/api/export/${recipe.recipe_id}`);
       if (!res.ok) throw new Error();
@@ -240,6 +246,13 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           </div>
         </div>
       </div>
+
+      {/* Auth Modal for unauthenticated actions */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultTab="login"
+      />
     </div>
   );
 }
