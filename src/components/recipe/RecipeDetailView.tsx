@@ -113,22 +113,22 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
         </Link>
 
         {/* Hero Content */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 p-6 md:p-12 lg:p-16 max-w-5xl">
-          <div className="flex flex-wrap gap-3 mb-4">
-            <span className="flex items-center gap-1.5 text-sm font-bold bg-white/15 text-white px-4 py-1.5 rounded-full backdrop-blur-md">
+        <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-12 lg:p-16 max-w-5xl">
+          <div className="flex flex-wrap gap-2 md:gap-3 mb-3 md:mb-4">
+            <span className="flex items-center gap-1.5 text-xs md:text-sm font-bold bg-white/15 text-white px-3 py-1 md:px-4 md:py-1.5 rounded-full backdrop-blur-md">
               <FiClock /> {recipe.prep_time_min ? `${recipe.prep_time_min} mins` : "N/A"}
             </span>
             {recipe.region && (
-              <span className="flex items-center gap-1.5 text-sm font-bold bg-white/15 text-white px-4 py-1.5 rounded-full backdrop-blur-md">
+              <span className="flex items-center gap-1.5 text-xs md:text-sm font-bold bg-white/15 text-white px-3 py-1 md:px-4 md:py-1.5 rounded-full backdrop-blur-md">
                 <FiMapPin /> {recipe.region}
               </span>
             )}
-            <span className="text-sm font-bold bg-brand-primary/80 text-white px-4 py-1.5 rounded-full backdrop-blur-md capitalize">
+            <span className="text-xs md:text-sm font-bold bg-brand-primary/80 text-white px-3 py-1 md:px-4 md:py-1.5 rounded-full backdrop-blur-md capitalize">
               {recipe.difficulty}
             </span>
           </div>
 
-          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 break-words">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4 md:mb-6 break-words drop-shadow-lg">
             {recipe.title}
           </h1>
 
@@ -139,11 +139,11 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button
               onClick={handleSave}
               disabled={isSaving || isSaved}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
+              className={`flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
                 isSaved
                   ? "bg-green-500 text-white"
                   : "bg-brand-primary hover:bg-brand-primary/90 text-white"
@@ -154,13 +154,13 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
             </button>
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
+              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
             >
               <FiShare2 /> Share
             </button>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
+              className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
             >
               <FiDownload /> Export
             </button>
