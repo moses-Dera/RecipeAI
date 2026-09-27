@@ -274,20 +274,20 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 animation-fade-in pb-32">
-      <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-text-secondary/10 pb-6">
-        <div className="flex items-center gap-4">
+      <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-4 border-b border-text-secondary/10 pb-6">
+        <div className="flex items-start gap-3 sm:gap-4">
           <button 
             onClick={() => router.push("/dashboard?tab=recipes")}
-            className="p-2 rounded-full hover:bg-text-secondary/10 transition-colors text-text-secondary"
+            className="p-2 mt-1 rounded-full hover:bg-text-secondary/10 transition-colors text-text-secondary shrink-0"
             title="Back to Dashboard"
           >
             <FiArrowLeft size={24} />
           </button>
           <div>
-            <h1 className="font-heading text-3xl font-bold text-text-primary">
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary leading-none">
               {recipeId ? "Edit Recipe" : "Write a Recipe"}
             </h1>
-            <div className="flex items-center gap-2 mt-1 text-sm text-text-secondary">
+            <div className="flex items-center gap-2 mt-2 text-sm text-text-secondary">
               {lastSaved ? (
                 <>
                   <FiCheck className="text-green-500" />
