@@ -20,7 +20,7 @@ export const ChatMessage = memo(({ msg }: ChatMessageProps) => {
         {msg.role === "user" ? (
           <p className="text-sm leading-relaxed">{msg.content}</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="w-full">
             <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
               {msg.content}
             </ReactMarkdown>
