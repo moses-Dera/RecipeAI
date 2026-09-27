@@ -408,7 +408,7 @@ function DashboardContent() {
             ) : savedRecipes.length === 0 ? (
               <div className="p-8 border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center text-center">
                 <FiHeart className="text-5xl text-brand-secondary/50 mb-4" />
-                <h3 className="font-heading text-xl font-bold">No Saved Recipes Yet</h3>
+                <h3 className="font-heading text-lg md:text-xl font-bold">No Saved Recipes Yet</h3>
                 <p className="text-text-secondary max-w-sm mt-2 mb-6">Explore the community catalogue and save your favorites here.</p>
                 <Link href="/explore" className="text-brand-primary font-bold hover:opacity-80 transition-opacity">
                   Explore Recipes
@@ -457,7 +457,7 @@ function DashboardContent() {
 
         {tab === "chats" && (
           <div className="space-y-6">
-            <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 className="font-heading text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
               <FiMessageSquare className="text-brand-primary" /> Recent AI Suggestions
             </h2>
             {isLoadingChats ? (
@@ -492,7 +492,7 @@ function DashboardContent() {
 
         {tab === "collections" && (
           <div className="space-y-6">
-            <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 className="font-heading text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
               <FiFolder className="text-brand-primary" /> My Collections
             </h2>
 
