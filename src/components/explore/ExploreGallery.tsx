@@ -46,42 +46,42 @@ export default function ExploreGallery({ initialRecipes }: ExploreGalleryProps) 
   return (
     <div className="w-full">
       {/* Header & Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8 mb-8 md:mb-12">
         <div>
-          <h1 className="text-5xl md:text-6xl font-heading font-bold text-text-primary mb-4">
+          <h1 className="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-3">
             Explore <span className="text-brand-primary italic">Recipes</span>
           </h1>
-          <p className="text-text-secondary text-lg max-w-xl">
+          <p className="text-text-secondary text-base md:text-lg max-w-xl">
             Discover our collection of authentic, flavorful dishes. Search by name, ingredient, or filter by region.
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row w-full lg:w-auto shrink-0 gap-4">
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto shrink-0 gap-3 md:gap-4">
           {/* Search Bar */}
-          <div className="relative w-full sm:w-72 xl:w-96">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-secondary">
-              <FiSearch size={20} />
+          <div className="relative w-full sm:w-64 xl:w-80">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-secondary">
+              <FiSearch size={18} />
             </div>
             <input
               type="text"
               placeholder="Search recipes or ingredients..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium"
+              className="w-full pl-10 pr-4 py-3 bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium text-sm md:text-base"
             />
           </div>
 
           {/* Region Filter Dropdown (Custom) */}
-          <div className="relative w-full sm:w-56" ref={dropdownRef}>
+          <div className="relative w-full sm:w-48" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full pl-11 pr-10 py-3.5 flex justify-between items-center bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary hover:border-brand-primary/30 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium cursor-pointer"
+              className="w-full pl-10 pr-8 py-3 flex justify-between items-center bg-bg-surface border border-text-secondary/10 rounded-2xl text-text-primary hover:border-brand-primary/30 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all shadow-sm font-medium cursor-pointer text-sm md:text-base"
             >
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-secondary">
-                <FiMapPin size={20} />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-secondary">
+                <FiMapPin size={18} />
               </div>
               <span className="truncate">{activeRegion === "All" ? "All Regions" : activeRegion}</span>
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-text-secondary">
+              <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-text-secondary">
                 <svg className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
