@@ -37,7 +37,7 @@ export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightPro
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-text-primary mb-6"
           >
-            Meet <span className="text-brand-primary italic">Chef Ada</span>
+            Meet <span className="text-brand-primary italic">Chef Cece</span>
           </motion.h2>
 
           <motion.p 
@@ -47,7 +47,7 @@ export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightPro
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg text-text-secondary font-sans leading-relaxed mb-8 max-w-lg"
           >
-            Think of her as your personal Nigerian grandmother in the kitchen. Whether you need a substitute for iru, want to know how to get that authentic &quot;smoky&quot; jollof flavor, or have a dietary restriction, Chef Ada has the answer.
+            Think of her as your personal Nigerian grandmother in the kitchen. Whether you need a substitute for iru, want to know how to get that authentic &quot;smoky&quot; jollof flavor, or have a dietary restriction, Chef Cece has the answer.
           </motion.p>
 
           <motion.div
@@ -61,7 +61,7 @@ export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightPro
               className="inline-flex flex-row items-center gap-3 bg-bg-surface border-2 border-brand-primary text-brand-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-primary hover:text-white transition-colors group shadow-lg shadow-brand-primary/20"
             >
               <FiMessageSquare className="group-hover:scale-110 transition-transform" />
-              Chat with Chef Ada
+              Chat with Chef Cece
             </button>
           </motion.div>
         </div>
@@ -73,10 +73,10 @@ export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightPro
             {/* Header */}
             <div className="flex items-center gap-4 mb-8 border-b border-text-secondary/10 pb-6">
               <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-brand-primary">
-                <Image src="/images/chef_ada_avatar.jpg" alt="Chef Ada" fill className="object-cover" />
+                <Image src="/images/chef_ada_avatar.jpg" alt="Chef Cece" fill className="object-cover" />
               </div>
               <div>
-                <h3 className="font-heading font-bold text-text-primary text-lg">Chef Ada</h3>
+                <h3 className="font-heading font-bold text-text-primary text-lg">Chef Cece</h3>
                 <p className="text-brand-primary text-xs font-bold flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online
                 </p>

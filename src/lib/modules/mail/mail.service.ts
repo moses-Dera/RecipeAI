@@ -48,20 +48,20 @@ class MailService {
     const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: `RecipeAI <${process.env.EMAIL_FROM}>`,
+      from: `Cece <${process.env.EMAIL_FROM}>`,
       to: email,
-      subject: "Reset your RecipeAI Password",
+      subject: "Reset your Cece Password",
       html: `
         <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; text-align: center; background-color: #FDFBF7; color: #2B1E17; border-radius: 16px;">
-          <h2 style="font-family: 'Outfit', sans-serif; color: #D95D39; font-size: 28px; margin-bottom: 16px;">RecipeAI</h2>
+          <h2 style="font-family: 'Outfit', sans-serif; color: #D95D39; font-size: 28px; margin-bottom: 16px;">Cece</h2>
           <div style="background-color: #F4F0EA; padding: 32px; border-radius: 12px; margin-bottom: 24px;">
             <h3 style="font-size: 20px; margin-top: 0; margin-bottom: 16px;">Password Reset Request</h3>
-            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 24px;">We received a request to reset your RecipeAI password. Don't worry, we've got you covered!</p>
+            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 24px;">We received a request to reset your Cece password. Don't worry, we've got you covered!</p>
             <a href="${resetUrl}" style="display: inline-block; padding: 14px 28px; background-color: #D95D39; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background-color 0.2s;">Reset Password</a>
             <p style="font-size: 14px; margin-top: 24px; color: #666;">This link will expire in 1 hour.</p>
           </div>
           <p style="font-size: 14px; color: #888;">If you didn't request a password reset, you can safely ignore this email.</p>
-          <p style="font-size: 12px; color: #888; margin-top: 24px;">&copy; ${new Date().getFullYear()} RecipeAI. All rights reserved.</p>
+          <p style="font-size: 12px; color: #888; margin-top: 24px;">&copy; ${new Date().getFullYear()} Cece. All rights reserved.</p>
         </div>
       `
     };
@@ -74,19 +74,19 @@ class MailService {
     const loginUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/auth/signin`;
 
     const mailOptions = {
-      from: `RecipeAI <${process.env.EMAIL_FROM}>`,
+      from: `Cece <${process.env.EMAIL_FROM}>`,
       to: email,
-      subject: "Welcome to RecipeAI! 🍳",
+      subject: "Welcome to Cece! 🍳",
       html: `
         <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; text-align: center; background-color: #FDFBF7; color: #2B1E17; border-radius: 16px;">
           <h2 style="font-family: 'Outfit', sans-serif; color: #D95D39; font-size: 28px; margin-bottom: 16px;">Welcome, ${username}!</h2>
           <div style="background-color: #F4F0EA; padding: 32px; border-radius: 12px; margin-bottom: 24px;">
-            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 16px;">We're thrilled to have you join the RecipeAI community!</p>
-            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 24px;">Whether you're looking for quick weekday dinners or planning a feast, Chef Ada (our AI assistant) is here to help you craft the perfect meal.</p>
+            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 16px;">We're thrilled to have you join the Cece community!</p>
+            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 24px;">Whether you're looking for quick weekday dinners or planning a feast, Chef Cece (our AI assistant) is here to help you craft the perfect meal.</p>
             <a href="${loginUrl}" style="display: inline-block; padding: 14px 28px; background-color: #D95D39; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: background-color 0.2s;">Start Cooking</a>
           </div>
           <p style="font-size: 14px; color: #888;">If you have any questions, feel free to reply to this email!</p>
-          <p style="font-size: 12px; color: #888; margin-top: 24px;">&copy; ${new Date().getFullYear()} RecipeAI. All rights reserved.</p>
+          <p style="font-size: 12px; color: #888; margin-top: 24px;">&copy; ${new Date().getFullYear()} Cece. All rights reserved.</p>
         </div>
       `
     };

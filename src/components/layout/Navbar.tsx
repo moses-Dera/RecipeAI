@@ -98,13 +98,13 @@ export function Navbar() {
               <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-brand-primary/20 group-hover:border-brand-primary transition-colors shrink-0">
                 <Image 
                   src="/images/chef_ada_avatar.jpg" 
-                  alt="RecipeAI Logo" 
+                  alt="Cece Logo" 
                   fill 
                   className="object-cover"
                 />
               </div>
               <span className="hidden sm:block font-heading font-bold text-2xl text-brand-primary">
-                RecipeAI
+                Cece
               </span>
             </Link>
             
@@ -155,7 +155,7 @@ export function Navbar() {
                 </>
               )}
               
-              {/* Ask Chef Ada Button */}
+              {/* Ask Chef Cece Button */}
               <button
                 onClick={() => setIsAdaDrawerOpen(true)}
                 className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2 gap-2 bg-text-secondary/10 hover:bg-brand-primary/10 text-text-primary hover:text-brand-primary rounded-full transition-colors font-bold text-sm shadow-sm sm:ml-2"

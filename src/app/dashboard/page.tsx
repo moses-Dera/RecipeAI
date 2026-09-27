@@ -253,11 +253,11 @@ function DashboardContent() {
             </div>
           )}
 
-          {/* Chef Ada Recommends */}
+          {/* Chef Cece Recommends */}
           {!isLoadingRecommended && recommended.length > 0 && (
             <div className="mb-12">
               <h2 className="font-heading text-xl md:text-2xl font-bold text-text-primary mb-4">
-                <span className="text-brand-primary">Chef Ada</span> Recommends
+                <span className="text-brand-primary">Chef Cece</span> Recommends
               </h2>
               <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                 {recommended.map((recipe) => (
@@ -294,7 +294,7 @@ function DashboardContent() {
             {tab === "recipes" && "Manage your culinary journey and your published recipes."}
             {tab === "saved" && "All your favorite recipes saved in one place."}
             {tab === "collections" && "Organize your recipes into custom folders."}
-            {tab === "chats" && "Review your past conversations with Chef Ada."}
+            {tab === "chats" && "Review your past conversations with Chef Cece."}
           </p>
         </div>
 
@@ -348,7 +348,7 @@ function DashboardContent() {
                 <div className="p-8 border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center text-center">
                   <FiBook className="text-5xl text-brand-primary/50 mb-4" />
                   <h3 className="font-heading text-lg md:text-xl font-bold">Your Recipe Book is Empty</h3>
-                  <p className="text-text-secondary max-w-sm mt-2 mb-6">Start talking to Chef Ada or add your own traditional Nigerian recipe manually!</p>
+                  <p className="text-text-secondary max-w-sm mt-2 mb-6">Start talking to Chef Cece or add your own traditional Nigerian recipe manually!</p>
                   <Link 
                     href="/recipe/create"
                     className="text-brand-primary font-bold hover:opacity-80 transition-opacity"
@@ -474,7 +474,7 @@ function DashboardContent() {
               <div className="text-center py-12 text-text-secondary">Loading chat history...</div>
             ) : chatSessions.length === 0 ? (
               <div className="text-center py-12 bg-bg-surface border border-text-secondary/10 rounded-2xl">
-                <p className="text-text-secondary">No chat history found. Start talking to Chef Ada!</p>
+                <p className="text-text-secondary">No chat history found. Start talking to Chef Cece!</p>
               </div>
             ) : (
               <div className="flex flex-col gap-4">

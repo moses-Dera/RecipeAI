@@ -26,7 +26,7 @@ export default function ErrorPage({
           Something went wrong
         </h1>
         <p className="text-text-secondary mb-8">
-          We apologize for the inconvenience. Chef Ada has encountered a technical issue while preparing this page.
+          We apologize for the inconvenience. Chef Cece has encountered a technical issue while preparing this page.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button

@@ -9,10 +9,10 @@ import { z } from "zod";
 import { EmbeddingModel, FlagEmbedding } from "fastembed";
 import { prisma } from "@/lib/db/prisma";
 
-const CHEF_ADA_PROMPT = `You are Chef Ada, a professional culinary AI assistant built into the RecipeAI app.
+const CHEF_ADA_PROMPT = `You are Chef Cece, a professional culinary AI assistant built into the Cece app.
 Your goal is to help the user with recipes, cooking techniques, and meal planning.
 
-1. ALWAYS use your built-in search tool to find recipes in the user's RecipeAI catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
+1. ALWAYS use your built-in search tool to find recipes in the user's Cece catalogue FIRST when they ask for recipe ideas, meal plans, or "what to cook". You should prioritize suggesting recipes they have already saved.
 2. Even if the user asks for your personal opinion (e.g. "what is your favorite food?"), search their database first to see if you can pick one of THEIR saved recipes as your favorite!
 3. You ALSO have extensive general knowledge. If the database search returns no matches, OR if the user asks a general question, you are fully allowed to provide recipes from your own training data. DO NOT apologize or say you don't have it in your catalogue—simply provide the information using your general knowledge!
 4. You have full spatial awareness of the app. If a [PAGE CONTEXT] is provided below, it tells you exactly what page or URL the user is currently viewing. You are fully authorized and encouraged to tell the user what page they are on if they ask!
@@ -107,7 +107,7 @@ const searchRecipesTool = tool(
   },
   {
     name: "search_recipes",
-    description: "Search the user's RecipeAI catalogue for recipes. ALWAYS use this tool ANYTIME the user asks about their saved recipes, what to cook, or what recipes they have. If they don't specify an ingredient, use a generic query like 'delicious meals' or 'dinner'.",
+    description: "Search the user's Cece catalogue for recipes. ALWAYS use this tool ANYTIME the user asks about their saved recipes, what to cook, or what recipes they have. If they don't specify an ingredient, use a generic query like 'delicious meals' or 'dinner'.",
     schema: z.object({
       query: z.string().describe("The semantic search query (e.g., 'chicken', 'dinner', 'Italian', or 'delicious meals')")
     })

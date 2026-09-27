@@ -34,7 +34,7 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
       }
       sessionIdRef.current = storedSessionId;
 
-      const initialGreeting = { role: "assistant", content: "Hello! I'm Chef Ada. What are we cooking today?" };
+      const initialGreeting = { role: "assistant", content: "Hello! I'm Chef Cece. What are we cooking today?" };
 
       // 2. Fetch history from backend (works universally now for guests and auth)
       try {
@@ -203,14 +203,14 @@ export default function ChefAdaDrawer({ isOpen, onClose }: ChefAdaDrawerProps) {
                 <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-brand-primary">
                   <Image
                     src="/images/chef_ada_avatar.jpg"
-                    alt="Chef Ada"
+                    alt="Chef Cece"
                     fill
                     sizes="40px"
                     className="object-cover"
                   />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-text-primary">Chef Ada</h3>
+                  <h3 className="font-heading font-bold text-lg text-text-primary">Chef Cece</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Online</span>

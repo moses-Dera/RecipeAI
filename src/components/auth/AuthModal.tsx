@@ -81,7 +81,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login" }: Aut
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="max-w-md" title={isLogin ? "Welcome Back" : "Join RecipeAI"}>
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="max-w-md" title={isLogin ? "Welcome Back" : "Join Cece"}>
       
       {/* Toggle */}
       <div className="flex p-1 bg-text-secondary/10 rounded-xl mb-6 relative">

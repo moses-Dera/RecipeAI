@@ -68,7 +68,7 @@ export default function LandingHero() {
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
             className="text-base md:text-lg text-white/90 lg:text-text-secondary font-sans mb-8 lg:mb-8 leading-relaxed max-w-lg"
           >
-            Let Chef Ada guide you through generations of flavor. Save, share, and master traditional dishes like never before.
+            Let Chef Cece guide you through generations of flavor. Save, share, and master traditional dishes like never before.
           </motion.p>
 
           <Link href="/explore">
@@ -100,7 +100,7 @@ export default function LandingHero() {
             style={{ x: leftCardX, y: leftCardY, rotate: leftCardRotate }}
             className="w-full h-full rounded-2xl overflow-hidden border-4 border-bg-surface shadow-xl"
           >
-            <Image src="/images/home.jpeg" alt="Chef Ada" fill className="object-cover" />
+            <Image src="/images/home.jpeg" alt="Chef Cece" fill className="object-cover" />
             {/* Removed the dark overlay to make it brighter */}
           </motion.div>
         </motion.div>
