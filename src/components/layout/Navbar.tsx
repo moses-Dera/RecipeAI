@@ -103,7 +103,7 @@ export function Navbar() {
                   className="object-cover"
                 />
               </div>
-              <span className="hidden sm:block font-heading font-bold text-2xl text-brand-primary pr-2 pt-1">
+              <span className="hidden sm:block font-heading font-bold text-2xl text-brand-primary pr-6 pt-1 tracking-wide">
                 Cece
               </span>
             </Link>
