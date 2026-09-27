@@ -32,6 +32,30 @@ function AuthParamListener({ setIsAuthModalOpen, setAuthTab }: { setIsAuthModalO
   return null;
 }
 
+function ChatParamListener({ setIsAdaDrawerOpen }: { setIsAdaDrawerOpen: (v: boolean) => void }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    const openChat = searchParams.get("chat");
+    
+    if (sessionId || openChat === "open") {
+      if (sessionId) {
+        localStorage.setItem("recipe_ai_session_id", sessionId);
+      }
+      setIsAdaDrawerOpen(true);
+      // Clean up the URL to prevent reopening on reload
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("session_id");
+      params.delete("chat");
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [searchParams, router, pathname, setIsAdaDrawerOpen]);
+}
+
 export function Navbar() {
   const { data: session } = useSession();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -55,6 +79,7 @@ export function Navbar() {
     <>
       <Suspense fallback={null}>
         <AuthParamListener setIsAuthModalOpen={setIsAuthModalOpen} setAuthTab={setAuthTab} />
+        <ChatParamListener setIsAdaDrawerOpen={setIsAdaDrawerOpen} />
       </Suspense>
       <motion.nav 
         variants={{

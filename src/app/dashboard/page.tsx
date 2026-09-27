@@ -285,7 +285,7 @@ function DashboardContent() {
         </>
       )}
 
-      <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <header className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-text-primary capitalize">
             {tab === "recipes" ? "My Recipes" : tab.replace("-", " ")}
@@ -301,9 +301,10 @@ function DashboardContent() {
         {tab === "recipes" && (
           <Link 
             href="/recipe/create"
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/20"
+            className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-colors mt-1"
+            title="Add Custom Recipe"
           >
-            <FiPlus className="text-xl" /> Add Custom Recipe
+            <FiPlus className="text-xl md:text-2xl" />
           </Link>
         )}
       </header>
@@ -480,7 +481,7 @@ function DashboardContent() {
                 {chatSessions.map((session) => (
                   <Link
                     key={session.session_id}
-                    href={`/chat?session_id=${session.session_id}`}
+                    href={`/dashboard?tab=chats&session_id=${session.session_id}`}
                     className="bg-bg-surface border border-text-secondary/10 p-5 rounded-2xl flex items-center justify-between group hover:shadow-md transition-all"
                   >
                     <div>
