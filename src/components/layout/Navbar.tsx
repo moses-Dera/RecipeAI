@@ -54,6 +54,8 @@ function ChatParamListener({ setIsAdaDrawerOpen }: { setIsAdaDrawerOpen: (v: boo
       router.replace(newUrl, { scroll: false });
     }
   }, [searchParams, router, pathname, setIsAdaDrawerOpen]);
+  
+  return null;
 }
 
 export function Navbar() {
