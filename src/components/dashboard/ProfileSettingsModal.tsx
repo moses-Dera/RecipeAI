@@ -27,6 +27,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
       const res = await fetch("/api/user/account", { method: "DELETE" });
       if (res.ok) {
         toast.success("Account deleted");
+        localStorage.removeItem("recipe_ai_session_id");
         signOut({ callbackUrl: "/" });
       } else {
         toast.error("Failed to delete account");

@@ -130,7 +130,7 @@ export function Navbar() {
                       <span className="hidden sm:inline font-bold">Admin</span>
                     </Link>
                   )}
-                  <div className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 gap-2 bg-text-secondary/10 rounded-full cursor-pointer group" onClick={() => signOut()} title="Log out">
+                  <div className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 gap-2 bg-text-secondary/10 rounded-full cursor-pointer group" onClick={() => { localStorage.removeItem("recipe_ai_session_id"); signOut(); }} title="Log out">
                     <FiLogOut className="sm:hidden text-brand-primary text-lg" />
                     <FiUser className="hidden sm:block text-brand-primary" />
                     <span className="hidden sm:inline text-sm font-bold text-text-primary group-hover:text-red-500 transition-colors">

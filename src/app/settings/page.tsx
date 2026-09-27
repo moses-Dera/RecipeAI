@@ -53,6 +53,7 @@ export default function SettingsPage() {
       const res = await fetch("/api/user/delete", { method: "DELETE" });
       if (res.ok) {
         toast.success("Account deleted successfully.");
+        localStorage.removeItem("recipe_ai_session_id");
         await signOut({ redirect: false });
         router.push("/");
       } else {
