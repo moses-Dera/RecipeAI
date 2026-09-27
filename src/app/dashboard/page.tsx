@@ -25,6 +25,7 @@ function DashboardContent() {
   
   const [collections, setCollections] = useState<any[]>([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(true);
+  const [showCreateCollection, setShowCreateCollection] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
 
@@ -195,90 +196,8 @@ function DashboardContent() {
 
   return (
     <div className="w-full animation-fade-in">
-      {!isLoadingStats && (
-        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
-          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
-            <div className="w-8 h-8 md:w-12 md:h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
-              <FiBook />
-            </div>
-            <div>
-              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Recipes</p>
-              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalRecipes}</h3>
-            </div>
-          </div>
-          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
-            <div className="w-8 h-8 md:w-12 md:h-12 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
-              <FiEye />
-            </div>
-            <div>
-              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Views</p>
-              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalViews}</h3>
-            </div>
-          </div>
-          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
-            <div className="w-8 h-8 md:w-12 md:h-12 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
-              <FiHeart />
-            </div>
-            <div>
-              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight whitespace-nowrap">Saved Favs</p>
-              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalSaved}</h3>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Chef Ada Recommends */}
-      {!isLoadingRecommended && recommended.length > 0 && (
-        <div className="mb-12">
-          <h2 className="font-heading text-xl md:text-2xl font-bold text-text-primary mb-4">
-            <span className="text-brand-primary">Chef Ada</span> Recommends
-          </h2>
-          <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-            {recommended.map((recipe) => (
-              <Link 
-                key={recipe.recipe_id} 
-                href={`/recipe/${recipe.recipe_id}`}
-                className="group relative min-w-[260px] md:min-w-[300px] h-[180px] md:h-[200px] rounded-2xl overflow-hidden flex-shrink-0 border border-text-secondary/10 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <Image 
-                  src={recipe.image_url || "/images/placeholder-1.jpg"} 
-                  alt={recipe.title} 
-                  fill 
-                  className="object-cover group-hover:scale-105 transition-transform duration-700" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-4">
-                  <h3 className="text-white font-bold font-heading text-lg leading-tight line-clamp-2">{recipe.title}</h3>
-                  <p className="text-white/80 text-sm mt-1">{recipe.prep_time_min ? `${recipe.prep_time_min} mins` : recipe.difficulty}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-2xl md:text-3xl font-bold text-text-primary capitalize">
-            {tab === "recipes" ? "My Recipes" : tab.replace("-", " ")}
-          </h1>
-          <p className="text-text-secondary mt-2">
-            Manage your culinary journey and saved favorites.
-          </p>
-        </div>
-
-        {tab === "recipes" && (
-          <Link 
-            href="/recipe/create"
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/20"
-          >
-            <FiPlus className="text-xl" /> Add Custom Recipe
-          </Link>
-        )}
-      </header>
-
-      {/* Navigation Tabs (Mobile Only) */}
-      <div className="flex md:hidden overflow-x-auto border-b border-text-secondary/10 mb-8 gap-6 hide-scrollbar px-1">
+      {/* Navigation Tabs (Mobile Only) - Moved to top for better UX */}
+      <div className="flex md:hidden overflow-x-auto border-b border-text-secondary/10 mb-6 gap-6 hide-scrollbar px-1">
         {[
           { id: "recipes", label: "My Recipes", icon: <FiBook className="mr-2 inline" /> },
           { id: "saved", label: "Saved Recipes", icon: <FiHeart className="mr-2 inline" /> },
@@ -298,6 +217,96 @@ function DashboardContent() {
           </Link>
         ))}
       </div>
+
+      {/* Only show Stats and Recommends on the main Overview tab */}
+      {tab === "recipes" && (
+        <>
+          {!isLoadingStats && (
+            <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+              <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
+                  <FiBook />
+                </div>
+                <div>
+                  <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Recipes</p>
+                  <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalRecipes}</h3>
+                </div>
+              </div>
+              <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
+                  <FiEye />
+                </div>
+                <div>
+                  <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Views</p>
+                  <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalViews}</h3>
+                </div>
+              </div>
+              <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
+                  <FiHeart />
+                </div>
+                <div>
+                  <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight whitespace-nowrap">Saved Favs</p>
+                  <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalSaved}</h3>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Chef Ada Recommends */}
+          {!isLoadingRecommended && recommended.length > 0 && (
+            <div className="mb-12">
+              <h2 className="font-heading text-xl md:text-2xl font-bold text-text-primary mb-4">
+                <span className="text-brand-primary">Chef Ada</span> Recommends
+              </h2>
+              <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+                {recommended.map((recipe) => (
+                  <Link 
+                    key={recipe.recipe_id} 
+                    href={`/recipe/${recipe.recipe_id}`}
+                    className="group relative min-w-[260px] md:min-w-[300px] h-[180px] md:h-[200px] rounded-2xl overflow-hidden flex-shrink-0 border border-text-secondary/10 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <Image 
+                      src={recipe.image_url || "/images/placeholder-1.jpg"} 
+                      alt={recipe.title} 
+                      fill 
+                      className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-4">
+                      <h3 className="text-white font-bold font-heading text-lg leading-tight line-clamp-2">{recipe.title}</h3>
+                      <p className="text-white/80 text-sm mt-1">{recipe.prep_time_min ? `${recipe.prep_time_min} mins` : recipe.difficulty}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-text-primary capitalize">
+            {tab === "recipes" ? "My Recipes" : tab.replace("-", " ")}
+          </h1>
+          <p className="text-text-secondary mt-2">
+            {tab === "recipes" && "Manage your culinary journey and your published recipes."}
+            {tab === "saved" && "All your favorite recipes saved in one place."}
+            {tab === "collections" && "Organize your recipes into custom folders."}
+            {tab === "chats" && "Review your past conversations with Chef Ada."}
+          </p>
+        </div>
+
+        {tab === "recipes" && (
+          <Link 
+            href="/recipe/create"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/20"
+          >
+            <FiPlus className="text-xl" /> Add Custom Recipe
+          </Link>
+        )}
+      </header>
 
       {/* Render tab content based on searchParams */}
       <div className="w-full">
@@ -492,20 +501,57 @@ function DashboardContent() {
 
         {tab === "collections" && (
           <div className="space-y-6">
-            <h2 className="font-heading text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
-              <FiFolder className="text-brand-primary" /> My Collections
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-lg md:text-xl font-bold flex items-center gap-2">
+                <FiFolder className="text-brand-primary" /> My Collections
+              </h2>
+              <button 
+                onClick={() => setShowCreateCollection(!showCreateCollection)}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
+                title="Create New Folder"
+              >
+                <FiPlus className="text-xl" />
+              </button>
+            </div>
 
             {/* Create Collection Form */}
-            <div className="bg-bg-surface border border-text-secondary/10 p-5 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
-              <input
-                type="text"
-                placeholder="New collection name..."
-                className="flex-1 bg-bg-default border border-text-secondary/20 rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-primary transition-colors"
-                value={newCollectionName}
-                onChange={(e) => setNewCollectionName(e.target.value)}
-                onKeyDown={async (e) => {
-                  if (e.key === "Enter" && newCollectionName.trim() && !isCreatingCollection) {
+            {showCreateCollection && (
+              <div className="bg-bg-surface border border-text-secondary/10 p-5 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6 animation-fade-in">
+                <input
+                  type="text"
+                  placeholder="New collection name..."
+                  className="flex-1 bg-bg-default border border-text-secondary/20 rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-primary transition-colors"
+                  value={newCollectionName}
+                  onChange={(e) => setNewCollectionName(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === "Enter" && newCollectionName.trim() && !isCreatingCollection) {
+                      setIsCreatingCollection(true);
+                      try {
+                        const res = await fetch("/api/collections", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ name: newCollectionName.trim() }),
+                        });
+                        if (res.ok) {
+                          toast.success("Collection created!");
+                          setNewCollectionName("");
+                          setShowCreateCollection(false);
+                          fetchStats(); // re-fetch collections
+                        } else {
+                          const data = await res.json();
+                          toast.error(data.error || "Failed to create collection");
+                        }
+                      } catch {
+                        toast.error("Failed to create collection");
+                      } finally {
+                        setIsCreatingCollection(false);
+                      }
+                    }
+                  }}
+                />
+                <button
+                  disabled={!newCollectionName.trim() || isCreatingCollection}
+                  onClick={async () => {
                     setIsCreatingCollection(true);
                     try {
                       const res = await fetch("/api/collections", {
@@ -516,6 +562,7 @@ function DashboardContent() {
                       if (res.ok) {
                         toast.success("Collection created!");
                         setNewCollectionName("");
+                        setShowCreateCollection(false);
                         fetchStats(); // re-fetch collections
                       } else {
                         const data = await res.json();
@@ -526,38 +573,13 @@ function DashboardContent() {
                     } finally {
                       setIsCreatingCollection(false);
                     }
-                  }
-                }}
-              />
-              <button
-                disabled={!newCollectionName.trim() || isCreatingCollection}
-                onClick={async () => {
-                  setIsCreatingCollection(true);
-                  try {
-                    const res = await fetch("/api/collections", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ name: newCollectionName.trim() }),
-                    });
-                    if (res.ok) {
-                      toast.success("Collection created!");
-                      setNewCollectionName("");
-                      fetchStats(); // re-fetch collections
-                    } else {
-                      const data = await res.json();
-                      toast.error(data.error || "Failed to create collection");
-                    }
-                  } catch {
-                    toast.error("Failed to create collection");
-                  } finally {
-                    setIsCreatingCollection(false);
-                  }
-                }}
-                className="px-6 py-2.5 bg-brand-primary text-white font-bold rounded-xl disabled:opacity-50"
-              >
-                {isCreatingCollection ? "Creating..." : "Create"}
-              </button>
-            </div>
+                  }}
+                  className="px-6 py-2.5 bg-brand-primary text-white font-bold rounded-xl disabled:opacity-50 hover:bg-brand-secondary transition-colors"
+                >
+                  {isCreatingCollection ? "Creating..." : "Create"}
+                </button>
+              </div>
+            )}
 
             {isLoadingCollections ? (
               <div className="text-center py-12 text-text-secondary">Loading collections...</div>
