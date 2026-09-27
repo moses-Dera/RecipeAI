@@ -37,10 +37,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary flex flex-col">
-      <Navbar />
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+    <div className="flex items-center justify-center pt-10">
+      <div className="w-full max-w-md">
           <Link href="/api/auth/signin" className="inline-flex items-center text-text-secondary hover:text-brand-primary mb-6 transition-colors">
             <FiArrowLeft className="mr-2" /> Back to Login
           </Link>
@@ -79,7 +77,7 @@ export default function ForgotPasswordPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full bg-bg-primary border border-text-secondary/20 rounded-xl py-3 pl-12 pr-4 text-text-primary focus:outline-none focus:border-brand-primary transition-colors"
-                        placeholder="chef@recipeai.com"
+                        placeholder="chef@cece.com"
                       />
                     </div>
                   </div>
@@ -96,7 +94,6 @@ export default function ForgotPasswordPage() {
             )}
           </div>
         </div>
-      </div>
     </div>
   );
 }
