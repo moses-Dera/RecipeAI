@@ -275,31 +275,31 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 animation-fade-in pb-32">
       <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-4 border-b border-text-secondary/10 pb-6">
-        <div className="flex items-start gap-3 sm:gap-4">
-          <button 
-            onClick={() => router.push("/dashboard?tab=recipes")}
-            className="p-2 mt-1 rounded-full hover:bg-text-secondary/10 transition-colors text-text-secondary shrink-0"
-            title="Back to Dashboard"
-          >
-            <FiArrowLeft size={24} />
-          </button>
-          <div>
-            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary leading-none">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button 
+              onClick={() => router.push("/dashboard?tab=recipes")}
+              className="p-2 rounded-full hover:bg-text-secondary/10 transition-colors text-text-secondary shrink-0"
+              title="Back to Dashboard"
+            >
+              <FiArrowLeft size={24} />
+            </button>
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary leading-none mt-1">
               {recipeId ? "Edit Recipe" : "Write a Recipe"}
             </h1>
-            <div className="flex items-center gap-2 mt-2 text-sm text-text-secondary">
-              {lastSaved ? (
-                <>
-                  <FiCheck className="text-green-500" />
-                  <span>Draft auto-saved at {lastSaved.toLocaleTimeString()}</span>
-                </>
-              ) : (
-                <span>Not saved yet</span>
-              )}
-            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-text-secondary pl-[52px] sm:pl-14">
+            {lastSaved ? (
+              <>
+                <FiCheck className="text-green-500" />
+                <span>Draft auto-saved at {lastSaved.toLocaleTimeString()}</span>
+              </>
+            ) : (
+              <span>Not saved yet</span>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end w-full sm:w-auto gap-3">
           <button
             type="button"
             onClick={handleDiscard}
