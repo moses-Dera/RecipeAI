@@ -329,13 +329,13 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Grandma's Secret Egusi"
-              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary font-heading text-xl"
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary font-bold text-xl placeholder:text-text-secondary/50 placeholder:font-normal"
             />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-text-secondary mb-2">Recipe Image</label>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               {imageUrl ? (
                 <div className="relative w-40 h-40 rounded-xl overflow-hidden shrink-0 border border-text-secondary/20 group">
                   <Image src={imageUrl} alt="Recipe" fill className="object-cover" />
@@ -424,7 +424,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="e.g. South-East Nigeria"
-              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50"
             />
           </div>
           <div>
@@ -434,7 +434,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               value={prepTime}
               onChange={(e) => setPrepTime(e.target.value)}
               placeholder="e.g. 45"
-              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50"
             />
           </div>
           <div>
@@ -444,7 +444,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               value={mealType}
               onChange={(e) => setMealType(e.target.value)}
               placeholder="e.g. Breakfast, Snack"
-              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50"
             />
           </div>
           <div>
@@ -454,7 +454,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               value={occasion}
               onChange={(e) => setOccasion(e.target.value)}
               placeholder="e.g. Everyday, Party"
-              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50"
             />
           </div>
         </div>
@@ -470,12 +470,12 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
                   value={ing}
                   onChange={(e) => handleIngredientChange(i, e.target.value)}
                   placeholder="e.g. 2 cups of melon seeds"
-                  className="flex-grow bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary"
+                  className="flex-grow min-w-0 bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50"
                 />
                 <button 
                   type="button"
                   onClick={() => setIngredients(ingredients.filter((_, idx) => idx !== i))}
-                  className="p-3 bg-text-secondary/5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
+                  className="p-3 shrink-0 bg-text-secondary/5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
                 >
                   <FiTrash2 />
                 </button>
@@ -505,12 +505,12 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
                   onChange={(e) => handleInstructionChange(i, e.target.value)}
                   placeholder="e.g. Blend the melon seeds until smooth..."
                   rows={3}
-                  className="flex-grow bg-transparent border-none focus:ring-0 text-text-primary resize-none custom-scrollbar outline-none"
+                  className="flex-grow min-w-0 bg-transparent border-none focus:ring-0 text-text-primary resize-none custom-scrollbar outline-none pr-10 placeholder:text-text-secondary/50"
                 />
                 <button 
                   type="button"
                   onClick={() => setInstructions(instructions.filter((_, idx) => idx !== i))}
-                  className="p-2 absolute top-4 right-4 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                  className="p-2 absolute top-4 right-4 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
                 >
                   <FiTrash2 />
                 </button>
@@ -537,7 +537,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
             onChange={(e) => setNutrition(e.target.value)}
             placeholder="e.g. Rich in protein and essential amino acids&#10;High in dietary fiber, aids digestion"
             rows={4}
-            className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary resize-none custom-scrollbar"
+            className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary resize-none custom-scrollbar placeholder:text-text-secondary/50"
           />
         </div>
 
