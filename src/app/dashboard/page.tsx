@@ -230,7 +230,7 @@ function DashboardContent() {
       {/* Chef Ada Recommends */}
       {!isLoadingRecommended && recommended.length > 0 && (
         <div className="mb-12">
-          <h2 className="font-heading text-2xl font-bold text-text-primary mb-4 flex items-center gap-2">
+          <h2 className="font-heading text-xl md:text-2xl font-bold text-text-primary mb-4">
             <span className="text-brand-primary">Chef Ada</span> Recommends
           </h2>
           <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -259,7 +259,7 @@ function DashboardContent() {
 
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-text-primary capitalize">
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-text-primary capitalize">
             {tab === "recipes" ? "My Recipes" : tab.replace("-", " ")}
           </h1>
           <p className="text-text-secondary mt-2">
@@ -288,6 +288,7 @@ function DashboardContent() {
           <Link
             key={t.id}
             href={`/dashboard?tab=${t.id}`}
+            scroll={false}
             className={`pb-4 font-bold transition-colors whitespace-nowrap border-b-2 ${
               tab === t.id ? "text-brand-primary border-brand-primary" : "text-text-secondary border-transparent hover:text-text-primary"
             }`}
@@ -304,7 +305,7 @@ function DashboardContent() {
           <div className="space-y-12">
             {drafts.length > 0 && (
               <div>
-                <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+                <h2 className="font-heading text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
                   <FiEdit2 className="text-text-secondary" /> Unpublished Drafts
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -330,13 +331,13 @@ function DashboardContent() {
             )}
             
             <div>
-              <h2 className="font-heading text-xl font-bold mb-4">Published Recipes</h2>
+              <h2 className="font-heading text-lg md:text-xl font-bold mb-4">Published Recipes</h2>
               {isLoadingRecipes && recipes.length === 0 ? (
                 <div className="text-center py-10 text-text-secondary">Loading your recipes...</div>
               ) : recipes.length === 0 ? (
                 <div className="p-8 border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center text-center">
                   <FiBook className="text-5xl text-brand-primary/50 mb-4" />
-                  <h3 className="font-heading text-xl font-bold">Your Recipe Book is Empty</h3>
+                  <h3 className="font-heading text-lg md:text-xl font-bold">Your Recipe Book is Empty</h3>
                   <p className="text-text-secondary max-w-sm mt-2 mb-6">Start talking to Chef Ada or add your own traditional Nigerian recipe manually!</p>
                   <Link 
                     href="/recipe/create"

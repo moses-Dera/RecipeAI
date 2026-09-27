@@ -42,6 +42,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             <Link
               key={item.id}
               href={`/dashboard?tab=${item.id}`}
+              scroll={false}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors relative ${
                 activeTab === item.id ? "text-brand-primary" : "text-text-secondary hover:bg-brand-primary/5 hover:text-brand-primary"
               }`}
