@@ -18,7 +18,7 @@ export default function TrendingGrid({ initialRecipes }: { initialRecipes: Recip
     <section className="w-full py-8 md:py-12 relative">
       <div className="flex justify-between items-end mb-12 lg:mb-20">
         <div>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-text-primary tracking-tight">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold text-text-primary">
             Trending <span className="text-brand-primary italic">Now</span>
           </h2>
         </div>
@@ -64,7 +64,7 @@ export default function TrendingGrid({ initialRecipes }: { initialRecipes: Recip
                       />
                     </div>
 
-                    <h3 className="text-xl md:text-3xl font-heading font-bold transition-transform duration-500 md:group-hover:translate-x-4 flex-1 line-clamp-1 break-words">
+                    <h3 className="text-lg md:text-2xl font-heading font-bold transition-transform duration-500 md:group-hover:translate-x-4 flex-1 line-clamp-1 break-words">
                       {recipe.title}
                     </h3>
                   </div>

@@ -33,8 +33,8 @@ export default async function CollectionPage({ params }: { params: Promise<{ id:
         <Link href="/dashboard?tab=collections" className="text-brand-primary font-bold hover:underline mb-4 inline-flex items-center gap-2">
           <FiArrowLeft /> Back to Dashboard
         </Link>
-        <h1 className="text-3xl font-heading font-bold text-text-primary flex items-center gap-3">
-          <FiFolder className="text-brand-primary" /> {collection.name}
+        <h1 className="text-2xl md:text-3xl font-heading font-bold text-text-primary flex items-center gap-3 break-all sm:break-words">
+          <FiFolder className="text-brand-primary shrink-0" /> <span className="line-clamp-2">{collection.name}</span>
         </h1>
         {collection.description && <p className="text-text-secondary mt-2">{collection.description}</p>}
       </div>

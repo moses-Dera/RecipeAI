@@ -35,7 +35,7 @@ export default function AiFeatureHighlight({ onOpenChat }: AiFeatureHighlightPro
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-text-primary tracking-tight mb-6"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-text-primary mb-6"
           >
             Meet <span className="text-brand-primary italic">Chef Ada</span>
           </motion.h2>

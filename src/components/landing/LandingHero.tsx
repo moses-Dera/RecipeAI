@@ -56,7 +56,7 @@ export default function LandingHero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            className="font-heading text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white lg:text-text-primary mb-4 lg:mb-6 leading-tight"
+            className="font-heading text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white lg:text-text-primary mb-4 lg:mb-6 leading-tight"
           >
             Discover the Soul of <br className="hidden md:block" />
             <span className="text-brand-primary">Nigerian Cooking</span>

@@ -25,7 +25,7 @@ export default function FinalCta() {
         <div className="absolute inset-0 bg-brand-primary/90 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mb-4 tracking-tight leading-tight">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-bold text-white mb-4 leading-tight">
             Ready to cook like a Nigerian grandmother?
           </h2>
           
