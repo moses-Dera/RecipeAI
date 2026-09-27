@@ -40,8 +40,15 @@ export default async function CollectionPage({ params }: { params: Promise<{ id:
       </div>
 
       {collection.saved_recipes.length === 0 ? (
-        <div className="text-center py-12 bg-bg-surface border border-text-secondary/10 rounded-2xl">
-          <p className="text-text-secondary">No recipes in this collection yet.</p>
+        <div className="text-center py-16 px-4 bg-bg-surface border border-dashed border-text-secondary/30 rounded-2xl flex flex-col items-center justify-center">
+          <FiFolder className="text-5xl text-brand-primary/40 mb-4" />
+          <h3 className="font-heading text-xl font-bold mb-2 text-text-primary">This collection is empty</h3>
+          <p className="text-text-secondary mb-6 max-w-md">
+            To add a recipe to this folder, simply browse the platform, click "Save Recipe" on any dish you like, and select this collection!
+          </p>
+          <Link href="/explore" className="bg-brand-primary text-white font-bold px-6 py-3 rounded-xl hover:bg-brand-secondary transition-colors">
+            Explore Recipes
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
