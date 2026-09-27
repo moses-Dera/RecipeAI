@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 interface ChatMessageProps {
   msg: { role: string; content: string };
@@ -20,7 +21,7 @@ export const ChatMessage = memo(({ msg }: ChatMessageProps) => {
           <p className="text-sm leading-relaxed">{msg.content}</p>
         ) : (
           <div className="overflow-x-auto">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
               {msg.content}
             </ReactMarkdown>
           </div>
