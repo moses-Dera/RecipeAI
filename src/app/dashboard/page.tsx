@@ -196,32 +196,32 @@ function DashboardContent() {
   return (
     <div className="w-full animation-fade-in">
       {!isLoadingStats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-bg-surface border border-text-secondary/10 p-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center text-xl">
+        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
               <FiBook />
             </div>
             <div>
-              <p className="text-text-secondary text-sm font-medium">Total Recipes</p>
-              <h3 className="text-2xl font-bold font-heading">{stats.totalRecipes}</h3>
+              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Recipes</p>
+              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalRecipes}</h3>
             </div>
           </div>
-          <div className="bg-bg-surface border border-text-secondary/10 p-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <div className="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-xl">
+          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
               <FiEye />
             </div>
             <div>
-              <p className="text-text-secondary text-sm font-medium">Total Views</p>
-              <h3 className="text-2xl font-bold font-heading">{stats.totalViews}</h3>
+              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight">Total Views</p>
+              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalViews}</h3>
             </div>
           </div>
-          <div className="bg-bg-surface border border-text-secondary/10 p-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <div className="w-12 h-12 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-xl">
+          <div className="bg-bg-surface border border-text-secondary/10 p-3 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 shadow-sm">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-base md:text-xl shrink-0">
               <FiHeart />
             </div>
             <div>
-              <p className="text-text-secondary text-sm font-medium">Saved Favorites</p>
-              <h3 className="text-2xl font-bold font-heading">{stats.totalSaved}</h3>
+              <p className="text-text-secondary text-[10px] md:text-sm font-medium leading-tight whitespace-nowrap">Saved Favs</p>
+              <h3 className="text-lg md:text-2xl font-bold font-heading">{stats.totalSaved}</h3>
             </div>
           </div>
         </div>

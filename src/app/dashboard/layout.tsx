@@ -62,7 +62,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 relative">
+      <main className="flex-1 min-w-0 p-4 md:p-8 relative">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>

@@ -88,12 +88,12 @@ export function Navbar() {
 
             <div className="flex items-center gap-2 sm:space-x-4">
               {session ? (
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <Link href="/dashboard" className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:bg-transparent bg-text-secondary/10 rounded-full text-text-secondary hover:text-brand-primary font-medium text-sm transition-colors" title="Dashboard">
+                <div className="flex items-center gap-2 sm:gap-1 lg:gap-2">
+                  <Link href="/dashboard" className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 sm:bg-transparent bg-text-secondary/10 rounded-full sm:rounded-lg text-text-secondary hover:text-brand-primary font-medium text-sm transition-colors" title="Dashboard">
                     <FiGrid className="sm:hidden text-lg" />
                     <span className="hidden sm:inline">Dashboard</span>
                   </Link>
-                  <Link href="/settings" className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:bg-transparent bg-text-secondary/10 rounded-full text-text-secondary hover:text-brand-primary font-medium text-sm transition-colors" title="Settings">
+                  <Link href="/settings" className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 sm:bg-transparent bg-text-secondary/10 rounded-full sm:rounded-lg text-text-secondary hover:text-brand-primary font-medium text-sm transition-colors" title="Settings">
                     <FiSettings className="sm:hidden text-lg" />
                     <span className="hidden sm:inline">Settings</span>
                   </Link>
