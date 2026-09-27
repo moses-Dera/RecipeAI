@@ -103,7 +103,7 @@ export function Navbar() {
                   className="object-cover"
                 />
               </div>
-              <span className="hidden sm:block font-heading font-bold text-2xl text-brand-primary">
+              <span className="hidden sm:block font-heading font-bold text-2xl text-brand-primary pr-2 pt-1">
                 Cece
               </span>
             </Link>
@@ -159,10 +159,10 @@ export function Navbar() {
               <button
                 onClick={() => setIsAdaDrawerOpen(true)}
                 className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2 gap-2 bg-text-secondary/10 hover:bg-brand-primary/10 text-text-primary hover:text-brand-primary rounded-full transition-colors font-bold text-sm shadow-sm sm:ml-2"
-                title="Ask Ada"
+                title="Ask Cece"
               >
                 <FiMessageCircle size={18} />
-                <span className="hidden sm:inline">Ask Ada</span>
+                <span className="hidden sm:inline">Ask Cece</span>
               </button>
             </div>
           </div>
