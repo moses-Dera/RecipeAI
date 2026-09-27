@@ -23,6 +23,12 @@ export class SavedService {
     if (result.count === 0) throw new Error("NOT_FOUND");
     return { success: true };
   }
+
+  async unsaveByRecipeId(userId: number, recipeId: number) {
+    const result = await savedRepository.removeByRecipeId(userId, recipeId);
+    if (result.count === 0) throw new Error("NOT_FOUND");
+    return { success: true };
+  }
 }
 
 export const savedService = new SavedService();

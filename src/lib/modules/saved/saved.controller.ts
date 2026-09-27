@@ -42,5 +42,20 @@ export class SavedController {
       return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
   }
+
+  async unsaveByRecipeId(req: Request) {
+    try {
+      const user = await getCurrentUser();
+      if (!user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const url = new URL(req.url);
+      const recipeId = parseInt(url.searchParams.get("recipeId") || "");
+      if (isNaN(recipeId)) return NextResponse.json({ error: "Invalid Recipe ID" }, { status: 400 });
+      await savedService.unsaveByRecipeId(parseInt(user.id as string), recipeId);
+      return NextResponse.json({ success: true });
+    } catch (error: any) {
+      if (error.message === "NOT_FOUND") return NextResponse.json({ error: "Saved recipe not found or permission denied" }, { status: 404 });
+      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+  }
 }
 export const savedController = new SavedController();

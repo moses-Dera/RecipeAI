@@ -28,6 +28,15 @@ export class SavedRepository {
       },
     });
   }
+
+  async removeByRecipeId(userId: number, recipeId: number) {
+    return prisma.savedRecipe.deleteMany({
+      where: {
+        recipe_id: recipeId,
+        user_id: userId,
+      },
+    });
+  }
 }
 
 export const savedRepository = new SavedRepository();
