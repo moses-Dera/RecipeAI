@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FiMail, FiArrowLeft, FiCheckCircle } from "react-icons/fi";
-import { Navbar } from "@/components/layout/Navbar";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

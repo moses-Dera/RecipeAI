@@ -4,7 +4,6 @@ import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FiLock, FiCheckCircle } from "react-icons/fi";
-import { Navbar } from "@/components/layout/Navbar";
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -140,14 +139,11 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-bg-primary flex flex-col">
-      <Navbar />
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
-            <ResetPasswordForm />
-          </Suspense>
-        </div>
+    <div className="flex items-center justify-center pt-10">
+      <div className="w-full max-w-md">
+        <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
+          <ResetPasswordForm />
+        </Suspense>
       </div>
     </div>
   );
