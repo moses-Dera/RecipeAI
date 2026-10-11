@@ -5,7 +5,7 @@ import ExploreGallery from "@/components/explore/ExploreGallery";
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "Explore Recipes - Cece",
+  title: "Explore Recipes - Cravely",
   description: "Browse our complete collection of authentic Nigerian recipes.",
 };
 

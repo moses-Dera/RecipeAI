@@ -40,7 +40,7 @@ const harmond = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Cece | Discover Nigerian Cuisine",
+  title: "Cravely | Discover Nigerian Cuisine",
   description: "AI-powered web app for discovering, managing, and sharing traditional Nigerian recipes.",
 };
 

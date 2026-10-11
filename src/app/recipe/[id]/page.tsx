@@ -14,11 +14,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (isNaN(id)) return { title: "Recipe Not Found" };
     const recipe = await recipeService.getRecipeById(id);
     return {
-      title: `${recipe.title} - Cece`,
+      title: `${recipe.title} - Cravely`,
       description: `Learn how to cook ${recipe.title}. ${recipe.region ? `A traditional ${recipe.region} recipe.` : ""}`,
     };
   } catch {
-    return { title: "Recipe Not Found - Cece" };
+    return { title: "Recipe Not Found - Cravely" };
   }
 }
 

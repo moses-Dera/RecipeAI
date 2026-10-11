@@ -84,12 +84,12 @@ export class ChatRepository {
         sessionsMap.set(msg.session_id, {
           session_id: msg.session_id,
           created_at: msg.created_at,
-          preview: msg.role === 'user' ? msg.message : "Chef Cece recipe suggestion",
+          preview: msg.role === 'user' ? msg.message : "Chef Cravely recipe suggestion",
         });
       } else {
-        // If we find a user message, prefer that for the preview instead of Ada's response
+        // If we find a user message, prefer that for the preview instead of Cravely's response
         const existing = sessionsMap.get(msg.session_id);
-        if (msg.role === 'user' && existing.preview === "Chef Cece recipe suggestion") {
+        if (msg.role === 'user' && existing.preview === "Chef Cravely recipe suggestion") {
           existing.preview = msg.message;
         }
       }

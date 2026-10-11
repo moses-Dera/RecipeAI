@@ -15,10 +15,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (isNaN(id)) return { title: "Recipe Not Found" };
     const recipe = await recipeService.getRecipeById(id);
     return {
-      title: `Edit ${recipe.title} - Cece`,
+      title: `Edit ${recipe.title} - Cravely`,
     };
   } catch {
-    return { title: "Recipe Not Found - Cece" };
+    return { title: "Recipe Not Found - Cravely" };
   }
 }
 
