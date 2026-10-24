@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/ToastContext";
-import { FiPlus, FiTrash2, FiUpload, FiImage, FiX, FiArrowLeft, FiSave, FiCheck } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiUpload, FiImage, FiX, FiArrowLeft, FiSave, FiCheck, FiYoutube } from "react-icons/fi";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { getYouTubeEmbedUrl, isValidYouTubeUrl } from "@/lib/utils/youtube";
 
 interface RecipeEditorProps {
   recipeId?: string; // If editing an existing recipe
@@ -25,6 +26,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
   const [prepTime, setPrepTime] = useState("");
   const [region, setRegion] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [gallery, setGallery] = useState<string[]>([]);
   const [mealType, setMealType] = useState("");
   const [occasion, setOccasion] = useState("");
@@ -58,6 +60,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
         setPrepTime(parsed.prepTime || "");
         setRegion(parsed.region || "");
         setImageUrl(parsed.imageUrl || "");
+        setVideoUrl(parsed.videoUrl || "");
         setGallery(parsed.gallery || []);
         setMealType(parsed.mealType || "");
         setOccasion(parsed.occasion || "");
@@ -79,6 +82,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
       setPrepTime(initialData.prep_time_min ? initialData.prep_time_min.toString() : "");
       setRegion(initialData.region || "");
       setImageUrl(initialData.image_url || "");
+      setVideoUrl(initialData.video_url || "");
       setGallery(initialData.gallery || []);
       
       let mTypes: string[] = [];
@@ -117,12 +121,12 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
   useEffect(() => {
     if (!isDraftRestored) return; // Don't overwrite draft before restoring
 
-    const isDirty = title || region || imageUrl || gallery.length > 0 || mealType || occasion || ingredients.some(i => i) || instructions.some(i => i) || nutrition;
+    const isDirty = title || region || imageUrl || videoUrl || gallery.length > 0 || mealType || occasion || ingredients.some(i => i) || instructions.some(i => i) || nutrition;
     if (!isDirty && !recipeId) return; // Don't save completely empty new drafts
 
     const saveDraft = () => {
       const data = {
-        title, prepTime, region, imageUrl, gallery, mealType, occasion,
+        title, prepTime, region, imageUrl, videoUrl, gallery, mealType, occasion,
         ingredients, instructions, nutrition, isPublic,
         updatedAt: new Date().toISOString()
       };
@@ -146,7 +150,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
 
     const timeoutId = setTimeout(saveDraft, 1000);
     return () => clearTimeout(timeoutId);
-  }, [title, prepTime, region, imageUrl, gallery, mealType, occasion, ingredients, instructions, nutrition, isPublic, draftKey, isDraftRestored, recipeId]);
+  }, [title, prepTime, region, imageUrl, videoUrl, gallery, mealType, occasion, ingredients, instructions, nutrition, isPublic, draftKey, isDraftRestored, recipeId]);
 
 
   const handleIngredientChange = (index: number, value: string) => {
@@ -229,6 +233,7 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
         prep_time_min: parseInt(prepTime) || 30,
         region,
         image_url: imageUrl || undefined,
+        video_url: videoUrl.trim() || undefined,
         gallery,
         meal_type: mealType.split(",").map(s => s.trim()).filter(Boolean),
         occasion: occasion.split(",").map(s => s.trim()).filter(Boolean),
@@ -416,6 +421,42 @@ export default function RecipeEditor({ recipeId, initialData }: RecipeEditorProp
               </div>
             </div>
           )}
+
+          {/* YouTube Video Tutorial */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-text-secondary mb-1 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <FiYoutube className="text-red-500" /> YouTube Video Tutorial (Optional)
+              </span>
+              {videoUrl && isValidYouTubeUrl(videoUrl) && (
+                <span className="text-xs text-green-500 font-bold flex items-center gap-1">
+                  <FiCheck /> Valid YouTube Link
+                </span>
+              )}
+            </label>
+            <input 
+              type="url" 
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
+              className="w-full bg-transparent border border-text-secondary/20 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors text-text-primary placeholder:text-text-secondary/50 text-sm"
+            />
+            <p className="text-xs text-text-secondary mt-1">
+              Paste any YouTube video link. It will display a Cinema Video player on the recipe page.
+            </p>
+
+            {/* Live Video Preview if valid */}
+            {videoUrl && isValidYouTubeUrl(videoUrl) && (
+              <div className="mt-3 relative w-full sm:max-w-md aspect-video rounded-xl overflow-hidden border border-text-secondary/20 shadow-sm bg-black">
+                <iframe
+                  src={getYouTubeEmbedUrl(videoUrl, false) || ""}
+                  title="Video Preview"
+                  className="absolute inset-0 w-full h-full border-0"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
+              </div>
+            )}
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">Region / Origin</label>

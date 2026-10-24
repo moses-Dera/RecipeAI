@@ -45,6 +45,7 @@ model Recipe {
   nutrition     String?
   region        String?
   image_url     String?
+  video_url     String?
   prep_time_min Int?
   difficulty    String            @default("medium")
   owner_id      Int?

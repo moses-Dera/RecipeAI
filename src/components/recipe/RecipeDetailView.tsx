@@ -5,13 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FiClock, FiMapPin, FiBookmark, FiShare2, FiArrowLeft, FiCheck, FiDownload, FiFolder, FiX, FiHeart } from "react-icons/fi";
+import { FiClock, FiMapPin, FiBookmark, FiShare2, FiArrowLeft, FiCheck, FiDownload, FiFolder, FiX, FiHeart, FiPlay, FiYoutube, FiExternalLink } from "react-icons/fi";
 import type { Recipe } from "@prisma/client";
 import { useToast } from "@/components/ui/ToastContext";
 import AuthModal from "@/components/auth/AuthModal";
+import { getYouTubeEmbedUrl } from "@/lib/utils/youtube";
 
 interface RecipeDetailViewProps {
-  recipe: Recipe & { owner?: { username: string } | null };
+  recipe: Recipe & { owner?: { username: string } | null; video_url?: string | null };
 }
 
 export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
@@ -22,8 +23,11 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [collections, setCollections] = useState<any[]>([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
+
+  const embedUrl = getYouTubeEmbedUrl(recipe.video_url);
 
   let ingredients: any[] = [];
   let steps: string[] = [];
@@ -135,6 +139,22 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           <FiArrowLeft /> Back
         </Link>
 
+        {/* Center Play Button on Big Hero Image */}
+        {embedUrl && (
+          <button
+            onClick={() => setIsVideoModalOpen(true)}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-3 bg-black/60 hover:bg-brand-primary text-white pl-4 pr-6 py-3.5 rounded-full backdrop-blur-md transition-all duration-300 group shadow-2xl hover:scale-105 border border-white/20 hover:border-brand-primary cursor-pointer"
+            title="Watch Cooking Video Tutorial"
+          >
+            <div className="w-10 h-10 rounded-full bg-brand-primary text-white group-hover:bg-white group-hover:text-brand-primary flex items-center justify-center transition-colors shadow-md">
+              <FiPlay className="text-xl ml-0.5 fill-current" />
+            </div>
+            <span className="font-heading font-bold text-sm md:text-base tracking-wide">
+              Watch Tutorial
+            </span>
+          </button>
+        )}
+
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-12 lg:p-16 max-w-5xl">
           <div className="flex flex-wrap gap-2 md:gap-3 mb-3 md:mb-4">
@@ -162,11 +182,11 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           )}
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleSaveClick}
               disabled={isSaving || isSaved}
-              className={`col-span-2 sm:col-span-1 flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
+              className={`flex justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-colors shadow-lg ${
                 isSaved
                   ? "bg-green-500 text-white"
                   : "bg-brand-primary hover:bg-brand-primary/90 text-white"
@@ -175,6 +195,15 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
               {isSaved ? <FiCheck /> : <FiBookmark />}
               {isSaved ? "Saved" : isSaving ? "Saving..." : "Save Recipe"}
             </button>
+            {embedUrl && (
+              <button
+                onClick={() => setIsVideoModalOpen(true)}
+                className="flex justify-center items-center gap-2 bg-red-600/90 hover:bg-red-600 text-white px-5 py-3 rounded-xl font-bold backdrop-blur-md transition-all shadow-lg hover:scale-105"
+                title="Watch Cooking Video Tutorial"
+              >
+                <FiPlay className="fill-current text-sm" /> Watch Video
+              </button>
+            )}
             <button
               onClick={handleShare}
               className="flex justify-center items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-3 rounded-xl font-bold backdrop-blur-md transition-colors"
@@ -319,6 +348,61 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Cinema Video Modal */}
+      {isVideoModalOpen && embedUrl && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-3 sm:p-6 md:p-10 animation-fade-in"
+          onClick={() => setIsVideoModalOpen(false)}
+        >
+          <div 
+            className="relative w-full max-w-4xl bg-bg-surface border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-text-secondary/10 bg-bg-surface">
+              <div className="flex items-center gap-3 overflow-hidden pr-4">
+                <div className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
+                  <FiYoutube size={20} />
+                </div>
+                <h3 className="font-heading font-bold text-base sm:text-lg text-text-primary truncate">
+                  {recipe.title} — Cooking Video Tutorial
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                {recipe.video_url && (
+                  <a
+                    href={recipe.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-brand-primary hover:underline px-3 py-1.5 rounded-lg hover:bg-brand-primary/10 transition-colors"
+                  >
+                    Open in YouTube <FiExternalLink size={14} />
+                  </a>
+                )}
+                <button
+                  onClick={() => setIsVideoModalOpen(false)}
+                  className="p-2 rounded-full hover:bg-text-secondary/10 text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                  title="Close (Esc)"
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Video Iframe Player (16:9 Aspect Ratio) */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={embedUrl}
+                title={`${recipe.title} Cooking Video`}
+                className="absolute inset-0 w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
           </div>
         </div>
       )}

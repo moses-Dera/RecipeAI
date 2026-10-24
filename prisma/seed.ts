@@ -1,12 +1,37 @@
+import 'dotenv/config';
+import bcrypt from 'bcryptjs';
 import { prisma } from "../src/lib/db/prisma";
 
 async function main() {
-  console.log("Cleaning up old platform recipes to prevent duplicates...");
+  console.log("==========================================================");
+  console.log("  CRAVELY DATABASE SEEDER (IDEMPOTENT)                   ");
+  console.log("==========================================================");
+
+  // 1. Ensure default demo / admin account exists
+  console.log("[1/3] Ensuring default demo user exists (idempotent upsert)...");
+  const hashedPassword = await bcrypt.hash("password123", 12);
+  const demoUser = await prisma.user.upsert({
+    where: { email: "chef@cravely.com" },
+    update: {
+      password: hashedPassword,
+    },
+    create: {
+      username: "Chef Cravely",
+      email: "chef@cravely.com",
+      password: hashedPassword,
+      role: "admin",
+    },
+  });
+  console.log(`      Demo user ready: ${demoUser.email} (Password: password123)`);
+
+  // 2. Clean up old platform recipes to prevent duplicates
+  console.log("[2/3] Cleaning up old platform recipes to prevent duplicates...");
   await prisma.recipe.deleteMany({
-    where: { owner_id: null }, // Only delete platform recipes
+    where: { owner_id: null }, // Only deletes platform recipes; user-created recipes are preserved
   });
 
-  console.log("Seeding database with authentic Nigerian recipes...");
+  // 3. Seed authentic Nigerian recipes with video tutorials
+  console.log("[3/3] Seeding platform recipes with YouTube video tutorials...");
 
   const recipes = [
     {
@@ -40,6 +65,7 @@ async function main() {
       ]),
       region: "West Africa",
       image_url: "/images/partyjollof.jpeg",
+      video_url: "https://www.youtube.com/watch?v=5rT8bVf0vYg",
       gallery: ["/images/partyjollof2.jpeg", "/images/partyjollof3.jpeg"],
       prep_time_min: 45,
       difficulty: "medium",
@@ -73,6 +99,7 @@ async function main() {
       ]),
       region: "Northern Nigeria",
       image_url: "/images/suya.jpeg",
+      video_url: "https://www.youtube.com/watch?v=n7Ue6yR83tM",
       gallery: ["/images/suya2.jpeg", "/images/suya3.jpeg"],
       prep_time_min: 30,
       difficulty: "medium",
@@ -109,6 +136,7 @@ async function main() {
       ]),
       region: "South East",
       image_url: "/images/poundedyamandegusi.jpeg",
+      video_url: "https://www.youtube.com/watch?v=kYv9G_lM8q0",
       gallery: ["/images/pondedyamandegusi2.jpeg", "/images/poundedyamandegusi3.jpeg"],
       prep_time_min: 60,
       difficulty: "hard",
@@ -142,6 +170,7 @@ async function main() {
       ]),
       region: "South South",
       image_url: "/images/peppersoup.jpeg",
+      video_url: "https://www.youtube.com/watch?v=o0G7xZ9v4o8",
       gallery: ["/images/peppersoup2.jpeg", "/images/peppersoup3.jpeg"],
       prep_time_min: 40,
       difficulty: "easy",
@@ -155,7 +184,7 @@ async function main() {
     const recipe = await prisma.recipe.create({
       data: recipeData,
     });
-    console.log(`Created recipe: ${recipe.title}`);
+    console.log(`      Created: ${recipe.title}`);
   }
 
   console.log("Database seeding completed successfully.");
