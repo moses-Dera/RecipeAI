@@ -39,10 +39,28 @@ const exportRecipeTool = tool(
 let embeddingModel: FlagEmbedding | null = null;
 const getEmbeddingModel = async () => {
   if (!embeddingModel) {
-    embeddingModel = await FlagEmbedding.init({ 
-      model: EmbeddingModel.BGESmallEN,
-      cacheDir: "/tmp"
-    });
+    try {
+      embeddingModel = await FlagEmbedding.init({ 
+        model: EmbeddingModel.BGESmallEN,
+        cacheDir: "/tmp"
+      });
+    } catch (err: any) {
+      if (err?.code === 'TAR_BAD_ARCHIVE' || err?.message?.includes('TAR_BAD_ARCHIVE')) {
+        console.warn("Detected corrupt fastembed archive in /tmp. Cleaning up for fresh re-download...");
+        try {
+          const fs = await import('fs');
+          const targets = ['/tmp/fast-bge-small-en.tar.gz', '/tmp/fast-bge-small-en'];
+          for (const target of targets) {
+            if (fs.existsSync(target)) {
+              fs.rmSync(target, { recursive: true, force: true });
+            }
+          }
+        } catch (cleanupErr) {
+          console.error("Failed to clean up corrupt archive:", cleanupErr);
+        }
+      }
+      throw err;
+    }
   }
   return embeddingModel;
 };
