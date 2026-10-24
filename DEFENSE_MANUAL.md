@@ -183,7 +183,7 @@ graph TD
 | **OUT-03** | **Semantic Recipe Detail** | Ingredients Table, Numbered Steps, Nutritional Breakdown | Web Client / SSR Dynamic Route (`/recipe/[id]`) | User clicks recipe card; fetches from `D2` |
 | **OUT-04** | **Chef Cravely AI Advice** | Markdown Formatted Recommendations, Clickable Recipe Links | Chat Drawer / SSE Streamed UI | RAG agent executes `search_recipes` tool over `pgvector` |
 | **OUT-05** | **Exported Recipe Guide** | Formatted Title, Region, Ingredients, Step Sequence | Binary DOCX File / HTTP Attachment | User triggers `/api/export/[id]` action |
-| **OUT-06** | **Cinema Video Player Modal** | Embedded 16:9 Privacy-Enhanced YouTube Player, Direct YouTube Link | Web Client / Overlay Modal (`/recipe/[id]`) | User clicks glassmorphic Play button on Hero Image or "Watch Video" |
+| **OUT-06** | **Cinema Video Player Modal** | Embedded 16:9 Privacy-Enhanced YouTube Player, Direct YouTube Link | Web Client / Overlay Modal (`/recipe/[id]`) | User clicks the "Watch Video" button in the recipe action row |
 
 **Verbatim Spoken Script (Member 2):**
 > *"Slide 6 presents our Output Design Specifications. We delineate exactly what data elements are produced, their delivery formats, and the triggering business logic. For example, Output OUT-04 delivers structured Markdown responses embedded with validated deep links, while OUT-05 generates binary Microsoft Word documents for offline culinary preservation. We now transition directly to the live system demonstration."*
@@ -292,7 +292,7 @@ Member 1 opens **Tab 3 (`http://localhost:8080`)** in Adminer and presents the d
 #### Objective 5 Verification: Interactive Multimedia & Cinema Video Modal
 * **Action:** On the recipe detail page (e.g., `/recipe/1` Classic Party Jollof or the newly created `/recipe/7`).
 * **Proof:**
-  1. Point out the centered glassmorphic **"Play Tutorial"** button hovering over the panoramic hero banner and the **"Watch Video"** button in the quick action row.
+  1. Point out the prominent red **"Watch Video"** button in the quick action row below the recipe title.
   2. Click the Play button: a dark **Cinema Video Modal** (`backdrop-blur-xl`) smoothly transitions into view, rendering the privacy-enhanced YouTube player (`youtube-nocookie.com/embed`) with responsive 16:9 aspect ratio.
   3. Highlight the **"Open in YouTube ↗"** direct outbound link for external viewing.
   4. Press <kbd>Esc</kbd> or click `✕`: the modal dismisses cleanly, the iframe unmounts (terminating audio playback immediately), and the user is returned seamlessly to the hero image with zero layout shift.

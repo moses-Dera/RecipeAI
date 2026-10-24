@@ -139,21 +139,6 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
           <FiArrowLeft /> Back
         </Link>
 
-        {/* Center Play Button on Big Hero Image */}
-        {embedUrl && (
-          <button
-            onClick={() => setIsVideoModalOpen(true)}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-3 bg-black/60 hover:bg-brand-primary text-white pl-4 pr-6 py-3.5 rounded-full backdrop-blur-md transition-all duration-300 group shadow-2xl hover:scale-105 border border-white/20 hover:border-brand-primary cursor-pointer"
-            title="Watch Cooking Video Tutorial"
-          >
-            <div className="w-10 h-10 rounded-full bg-brand-primary text-white group-hover:bg-white group-hover:text-brand-primary flex items-center justify-center transition-colors shadow-md">
-              <FiPlay className="text-xl ml-0.5 fill-current" />
-            </div>
-            <span className="font-heading font-bold text-sm md:text-base tracking-wide">
-              Watch Tutorial
-            </span>
-          </button>
-        )}
 
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-12 lg:p-16 max-w-5xl">
